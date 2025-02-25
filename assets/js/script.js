@@ -54,7 +54,7 @@ jQuery(document).ready(function ($) {
 
         // Generate a 6-digit OTP
         let otp = Math.floor(100000 + Math.random() * 900000);
-        let expiryTime = new Date(new Date().getTime() + 60 * 1000).toUTCString(); // 60s expiry
+        let expiryTime = new Date(new Date().getTime() + 180 * 1000).toUTCString(); // 180s expiry
 
         // Store OTP in JavaScript cookie
         document.cookie = "otp=" + otp + "; expires=" + expiryTime + "; path=/;";

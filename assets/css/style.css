@@ -156,6 +156,16 @@
     justify-content: space-between;
     margin-top: 5px;
 }
+#step-2 .msc-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#step-2 .msc-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
 /*Shipping methods*/
 .shipping-methods {
@@ -190,7 +200,7 @@
 .shipping-methods label {
     width: 100%;
 }
-.shipping-methods .date-time {
+.msc-checkout .date-time {
     width: 100%;
     border: 1px solid #666;
     border-radius: 3px;

@@ -107,26 +107,37 @@ foreach ($shipping_zones as $zone) {
         <div class="shipping-fields" data-method-id="<?php echo esc_attr($method['id']); ?>" style="display: none;">
         <?php
         if( $method['id'] == 'local_pickup' ) {
+            $ship_regions = [
+                0 => 'HK',
+                2 => 'TW',
+                3 => 'TH',
+            ];
+            $shipany_region = SHIPANY()->get_shipping_shipany_settings()['shipany_region'];
+            $region_short = $ship_regions[$shipany_region];
+            $states = WC()->countries->get_states( $region_short );
             ?>
             <p class="form-row form-row-wide" id="calc_shipping_country_field">
                 <label for="calc_shipping_country"><?php esc_html_e( 'Area', 'woocommerce' ); ?></label>
-                <select name="calc_shipping_country" id="calc_shipping_country" class="country_to_state country_select" rel="calc_shipping_state">
-                    <option value="default"><?php esc_html_e( 'Select Pickup Point Area', 'woocommerce' ); ?></option>
-                    <option value="rrr">dfgf</option>
-
+                <select name="calc_shipping_state" class="state_select" id="calc_shipping_state" data-placeholder="<?php esc_attr_e( 'State', 'woocommerce' ); ?>">
+                    <option value=""><?php esc_html_e( 'Select an option&hellip;', 'woocommerce' ); ?></option>
+                    <?php
+                    foreach ( $states as $ckey => $cvalue ) {
+                        echo '<option value="' . esc_attr( $ckey ) . '" ' . selected( $current_r, $ckey, false ) . '>' . esc_html( $cvalue ) . '</option>';
+                    }
+                    ?>
                 </select>
             </p>
             <p>
                 <label>
                     Pickup Point Address
-                    <input type="text" placeholder="Pickup Point Address" class="shipping-address" />
                 </label>
+                <input type="text" placeholder="Pickup Point Address" class="shipping-address" />
             </p>
             <p>
                 <label>
                     Pickup Point Number
-                    <input type="number" placeholder="Pickup Point Number" class="shipping-number" />
                 </label>
+                <input type="number" placeholder="Pickup Point Number" class="shipping-number" />
             </p>
         <?php }else { ?>
             <p class="form-row form-row-wide" id="calc_shipping_country_field">
@@ -175,26 +186,26 @@ foreach ($shipping_zones as $zone) {
             <p>
                 <label>
                     Delivery Address
-                    <input type="text" placeholder="Delivery Address" class="shipping-address" />
                 </label>
+                <input type="text" placeholder="Delivery Address" class="shipping-address" />
             </p>
             <p>
                 <label>
                     Date of Receipt
-                    <input type="datetime-local" placeholder="Date of Receipt" class="shipping-receipt-date date-time" />
                 </label>
+                <input type="datetime-local" placeholder="Date of Receipt" class="shipping-receipt-date date-time" />
             </p>
             <p>
                 <label>
                     Delivery Time
-                    <input type="datetime-local" placeholder="Delivery Time" class="shipping-time date-time" />
                 </label>
+                <input type="datetime-local" placeholder="Delivery Time" class="shipping-time date-time" />
             </p>
             <p>
                 <label>
                     Contact Number
-                    <input type="number" placeholder="Contact Number" class="shipping-number" />
                 </label>
+                <input type="number" placeholder="Contact Number" class="shipping-number" />
             </p>
         <?php } ?>
     </div>
@@ -211,6 +222,14 @@ foreach ($shipping_zones as $zone) {
 </div>
 
 <div class="msc-nav">
+    <div class="msc-nav-left">
+        <div class="msc-nav-qty">
+            <span class="dashicons dashicons-cart"></span> <?php echo WC()->cart->get_cart_contents_count(); ?>
+        </div>
+        <div class="msc-nav-total">
+            <?php echo WC()->cart->get_total(); ?>
+        </div>
+    </div>
     <button id="nextStep">Checkout</button>
 </div>
 
