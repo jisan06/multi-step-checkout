@@ -7,22 +7,27 @@ if (!defined('ABSPATH')) {
 function msc_checkout_shortcode() {
     ?>
     <div class="msc-checkout">
+        <button id="backButton" style="display: none;">
+            <span class="dashicons dashicons-arrow-left-alt2"></span>
+        </button>
         <div class="steps">
-            <div class="step active">1</div>
-            <div class="step">2</div>
-            <div class="step">3</div>
+            <div class="step <?php echo is_user_logged_in() ? 'disabled' : 'active'; ?>" data-step="1">1</div>
+            <div class="step <?php echo is_user_logged_in() ? 'active' : 'disabled'; ?>" data-step="2">2</div>
+            <div class="step disabled" data-step="3">3</div>
         </div>
 
         <div class="msc-content">
-            <div id="step-1" class="step-content active"><?php include MSC_PLUGIN_PATH . 'includes/step-login.php'; ?></div>
-            <div id="step-2" class="step-content"><?php include MSC_PLUGIN_PATH . 'includes/step-cart.php'; ?></div>
-            <div id="step-3" class="step-content"><?php include MSC_PLUGIN_PATH . 'includes/step-checkout.php'; ?></div>
+            <div id="step-1" class="step-content <?php echo is_user_logged_in() ? 'hidden' : 'active'; ?>">
+                <?php include MSC_PLUGIN_PATH . 'includes/step-login.php'; ?>
+            </div>
+            <div id="step-2" class="step-content <?php echo is_user_logged_in() ? 'active' : 'hidden'; ?>">
+                <?php include MSC_PLUGIN_PATH . 'includes/step-cart.php'; ?>
+            </div>
+            <div id="step-3" class="step-content hidden">
+                <?php include MSC_PLUGIN_PATH . 'includes/step-checkout.php'; ?>
+            </div>
         </div>
 
-        <div class="msc-nav">
-            <button id="prevStep" class="hidden">Previous</button>
-            <button id="nextStep">Next</button>
-        </div>
     </div>
     <?php
 }
