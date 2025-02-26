@@ -39,8 +39,9 @@
     <div>
         <input type="email" id="email_address" placeholder="Email">
     </div>
-    <div>
-        <input type="password" id="user_password" placeholder="Password">
+    <div id="otp-section">
+        <input type="text" id="email_otp_code" placeholder="OTP Code">
+        <button id="send_otp_email">GET OTP</button>
     </div>
     <button id="login_email">Login</button>
 </div>

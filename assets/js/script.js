@@ -40,7 +40,7 @@ jQuery(document).ready(function ($) {
         $($(this).data("target")).addClass("active");
     });
 
-    // Handle OTP sending
+    // Handle OTP sending for mobile
     $("#send_otp").click(function () {
         let mobileNumber = $("#mobile_number").val().trim();
         let mscCountryCC = $("#msc_country_cc").val().trim();
@@ -56,8 +56,6 @@ jQuery(document).ready(function ($) {
         let otp = Math.floor(100000 + Math.random() * 900000);
         let expiryTime = new Date(new Date().getTime() + 180 * 1000).toUTCString(); // 180s expiry
 
-        // Store OTP in JavaScript cookie
-        document.cookie = "otp=" + otp + "; expires=" + expiryTime + "; path=/;";
         $.ajax({
             url: msc_core.ajaxurl, // Use localized script variable
             method: 'POST',
@@ -68,13 +66,15 @@ jQuery(document).ready(function ($) {
             },
             success: function (response) {
                 if (response.success) {
+                    // Store OTP in JavaScript cookie
+                    document.cookie = "otp=" + otp + "; expires=" + expiryTime + "; path=/;";
                     alert('otp is send to your mobile')
                 } else {
                     alert('Error: ' + response.data); // Error message
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert('AJAX error: ' + textStatus);
+                alert('Error: ' + textStatus);
             }
         });
     });
@@ -105,14 +105,13 @@ jQuery(document).ready(function ($) {
         // Check against the dummy OTP code '123'
         if (otpCode ===storedOTP) {
             let mobile = $("#mobile_number").val();
-            let otp = $("#otp_code").val();
             $.ajax({
                 url: msc_core.ajaxurl,
                 type: "POST",
                 data: {
                     action: "msc_mobile_login",
                     mobile: mobile,
-                    otp: otp,
+                    otp: otpCode,
                     security: msc_core.nonce
                 },
                 success: function (response) {
@@ -122,6 +121,9 @@ jQuery(document).ready(function ($) {
                     }else {
                         alert('Login failed, Please try again!')
                     }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Error: ' + textStatus);
                 }
             });
         } else {
@@ -129,49 +131,88 @@ jQuery(document).ready(function ($) {
         }
     });
 
-    // Handle email login
-    $("#login_email").click(function () {
-        let email = $("#email_address").val().trim(); // Fixed ID selector to match input field
-        let password = $("#user_password").val().trim(); // Get password from input
-
+    // Handle OTP sending for email
+    $("#send_otp_email").click(function () {
+        let email = $("#email_address").val().trim();
         if (email === "") {
-            alert("Please enter your email.");
+            alert("Please enter your email address.");
             return;
         }
+        // Remove any existing OTP
+        document.cookie = "otp=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
-        if (password === "") {
-            alert("Please enter your password.");
-            return;
-        }
+        // Generate a 6-digit OTP
+        let otp = Math.floor(100000 + Math.random() * 900000);
+        let expiryTime = new Date(new Date().getTime() + 180 * 1000).toUTCString(); // 180s expiry
 
         $.ajax({
             url: msc_core.ajaxurl, // Use localized script variable
             method: 'POST',
             data: {
-                action: 'email_login',
+                action: 'send_otp_email',
                 email: email,
-                password: password,
-                security: msc_core.nonce // Optionally include a nonce for security
+                otp: otp,
             },
             success: function (response) {
                 if (response.success) {
-                    alert("You are logged in");
-                    window.location.reload();
+                    // Store OTP in JavaScript cookie
+                    document.cookie = "otp=" + otp + "; expires=" + expiryTime + "; path=/;";
+                    alert('otp is send to your email')
                 } else {
-                    alert('Login failed: ' + response.data); // Show error message
+                    alert('Error: ' + response.data); // Error message
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert('AJAX error: ' + textStatus);
+                alert('Error: ' + textStatus);
             }
         });
+    });
+
+    // Handle email login
+    $("#login_email").click(function () {
+        let otpCode = $("#email_otp_code").val().trim();
+        let storedOTP = getOTPFromCookie();
+        if (otpCode === "") {
+            alert("Please enter the OTP code.");
+            return;
+        }
+
+        // Check against the dummy OTP code '123'
+        if (otpCode ===storedOTP) {
+            let email = $("#email_address").val().trim(); // Fixed ID selector to match input field
+            if (email === "") {
+                alert("Please enter your email.");
+                return;
+            }
+
+            $.ajax({
+                url: msc_core.ajaxurl, // Use localized script variable
+                method: 'POST',
+                data: {
+                    action: 'email_login',
+                    email: email,
+                    otp: otpCode,
+                    security: msc_core.nonce // Optionally include a nonce for security
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert("You are logged in");
+                        window.location.reload();
+                    } else {
+                        alert('Login failed: ' + response.data); // Show error message
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Error: ' + textStatus);
+                }
+            });
+        }
     });
 });
 
 jQuery(document).ready(function($) {
-
     $('input[name="shipping_method"]').on('click', function() {
-        // Hide all shipping fields first
+        // Hide elements
         $('.shipping-fields').hide();
         $('.cart-items-wrap').hide();
         $('#coupon_wrap').hide();
@@ -182,9 +223,27 @@ jQuery(document).ready(function($) {
         // Show the corresponding shipping fields
         $('.shipping-methods-details .shipping-fields[data-method-id="' + selectedMethodId + '"]').show();
         $('#backButton').show();
+
+        // Trigger WooCommerce to update the cart total via AJAX
+        $.ajax({
+            type: 'POST',
+            url: msc_core.ajaxurl,
+            data: {
+                action: 'update_shipping',
+                shipping_method: selectedMethodId,
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Update the cart total dynamically
+                    $('.msc-nav-total').html(response.data.total); // Update total cart amount
+                }
+            }
+        });
     });
 });
 
+
+//Coupon section
 jQuery(document).ready(function ($) {
     $('#toggleCoupon').on('click', function () {
         $('.shipping-fields').hide();
@@ -192,69 +251,42 @@ jQuery(document).ready(function ($) {
         $('#coupon_wrap').show();
         $('#backButton').show();
     });
-
-    function checkAppliedCoupon() {
-        $.ajax({
-            url: msc_core.ajaxurl,
-            type: 'POST',
-            data: { action: 'check_applied_coupon' },
-            success: function (response) {
-                if (response.success && response.data.coupon) {
-                    $('#couponCode').val(response.data.coupon);
-                    $('#discountAmount').text(response.data.discount);
-                    $('#discountMessage').show();
-                    $('#removeCoupon').show();
-                }
-            }
-        });
-    }
-
-    checkAppliedCoupon(); // Check coupon on page load
-
-    $('#applyCoupon').on('click', function () {
-        var couponCode = $('#couponCode').val();
-
-        if (couponCode === '') {
-            alert('Please enter a coupon code');
-            return;
-        }
+    // Apply Coupon
+    $('.apply-button').on('click', function () {
+        var coupon_code = $(this).data('coupon');
 
         $.ajax({
             url: msc_core.ajaxurl,
             type: 'POST',
             data: {
                 action: 'apply_coupon',
-                coupon_code: couponCode
-            },
-            beforeSend: function () {
-                $('#applyCoupon').text('Applying...');
+                coupon_code: coupon_code
             },
             success: function (response) {
                 if (response.success) {
-                    $('#discountAmount').text(response.data.discount);
-                    $('#discountMessage').show();
-                    $('#removeCoupon').show();
+                    $('#discountAmount').html(response.data.discount);
+                    $('.msc-nav-total').html(response.data.total); // Update total cart amount
+                    $('#coupon_summary').show();
                 } else {
-                    alert(response.data.message);
+                    alert(response.message);
                 }
-            },
-            complete: function () {
-                $('#applyCoupon').text('Apply');
             }
         });
     });
 
+    // Remove Coupon
     $('#removeCoupon').on('click', function () {
         $.ajax({
             url: msc_core.ajaxurl,
             type: 'POST',
-            data: { action: 'remove_coupon' },
+            data: {
+                action: 'remove_all_coupons'
+            },
             success: function (response) {
                 if (response.success) {
-                    $('#couponCode').val('');
                     $('#discountAmount').text('$0.00');
-                    $('#discountMessage').hide();
-                    $('#removeCoupon').hide();
+                    $('.msc-nav-total').html(response.data.total); // Update total cart amount
+                    $('#coupon_summary').hide();
                 }
             }
         });

@@ -2,79 +2,9 @@
 if (!defined('ABSPATH')) {
     exit;
 }
-add_action('wp_ajax_nopriv_msc_mobile_login', 'msc_mobile_login');
-add_action('wp_ajax_msc_mobile_login', 'msc_mobile_login');
-add_action('wp_ajax_email_login', 'handle_email_login'); // For logged-in users
-add_action('wp_ajax_nopriv_email_login', 'handle_email_login'); // For non-logged-in users
-add_action('wp_ajax_send_otp', 'send_otp'); // For logged-in users
-add_action('wp_ajax_nopriv_send_otp', 'send_otp'); // For non-logged-in users
-add_action('wp_ajax_apply_coupon', 'apply_coupon');
-add_action('wp_ajax_nopriv_apply_coupon', 'apply_coupon');
-add_action('wp_ajax_check_applied_coupon', 'check_applied_coupon');
-add_action('wp_ajax_nopriv_check_applied_coupon', 'check_applied_coupon');
-add_action('wp_ajax_remove_coupon', 'remove_coupon');
-add_action('wp_ajax_nopriv_remove_coupon', 'remove_coupon');
-add_action('wp_ajax_place_order', 'place_order');
-add_action('wp_ajax_nopriv_place_order', 'place_order');
 
-function msc_mobile_login() {
-    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'msc_nonce')) {
-        wp_send_json_error('Nonce verification failed!', 400);
-    }
-    if (!isset($_POST['mobile'])) {
-        wp_send_json_error('Invalid request!', 400);
-    }
-
-    $mobile = sanitize_text_field($_POST['mobile']);
-    $otp = sanitize_text_field($_POST['otp']);
-
-    if (!isset($_COOKIE['otp']) || $_COOKIE['otp'] != $otp) {
-        wp_send_json_error('Invalid OTP!', 400);
-    }
-
-    $user_query = new WP_User_Query([
-        'meta_key'   => 'xoo_ml_phone_no', // Change this to your actual meta key
-        'meta_value' => $mobile,
-        'number'     => 1,
-    ]);
-
-    $users = $user_query->get_results();
-
-    if (empty($users)) {
-        wp_send_json_error('User not found!', 400);
-    }
-
-    $user = $users[0];
-
-    // Log in the user
-    wp_set_current_user($user->ID);
-    wp_set_auth_cookie($user->ID);
-    wp_send_json_success(['message' => 'Login successful']);
-}
-
-function handle_email_login() {
-    // Check if email and password are set
-    if (!isset($_POST['email']) || !isset($_POST['password'])) {
-        wp_send_json_error('Email and password are required');
-    }
-
-    $email = sanitize_email($_POST['email']);
-    $password = $_POST['password'];
-
-    // Authenticate user
-    $user = wp_authenticate($email, $password);
-
-    if (is_wp_error($user)) {
-        wp_send_json_error('Invalid email or password');
-    }
-
-    wp_set_current_user($user->ID);
-    wp_set_auth_cookie($user->ID); // Set the authentication cookie
-
-    wp_send_json_success('Login successful');
-    wp_die(); // Terminate AJAX request
-}
-
+add_action('wp_ajax_send_otp', 'send_otp'); // For mobile
+add_action('wp_ajax_nopriv_send_otp', 'send_otp'); // For mobile
 function send_otp() {
     if (!isset($_POST['mobile_number'])) {
         wp_send_json_error('Mobile number is required');
@@ -82,6 +12,16 @@ function send_otp() {
 
     $mobile_number = sanitize_text_field($_POST['mobile_number']);
     $otp = sanitize_text_field($_POST['otp']);
+
+    $user_query = new WP_User_Query([
+        'meta_key'   => 'xoo_ml_phone_no', // Change this to your actual meta key
+        'meta_value' => $mobile_number,
+        'number'     => 1,
+    ]);
+    $users = $user_query->get_results();
+    if (empty($users)) {
+        wp_send_json_error('Mobile number not found!');
+    }
 
     // Twilio credentials
     $sid = 'AC7d242030987be8cc3748c9efbf150fc5';
@@ -124,43 +64,135 @@ function send_otp() {
     wp_die(); // Terminate AJAX request
 }
 
-function apply_coupon() {
+add_action('wp_ajax_nopriv_msc_mobile_login', 'msc_mobile_login');
+add_action('wp_ajax_msc_mobile_login', 'msc_mobile_login');
+function msc_mobile_login() {
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'msc_nonce')) {
+        wp_send_json_error('Nonce verification failed!', 400);
+    }
+    if (!isset($_POST['mobile'])) {
+        wp_send_json_error('Invalid request!', 400);
+    }
+
+    $mobile = sanitize_text_field($_POST['mobile']);
+    $otp = sanitize_text_field($_POST['otp']);
+
+    if (!isset($_COOKIE['otp']) || $_COOKIE['otp'] != $otp) {
+        wp_send_json_error('Invalid OTP!', 400);
+    }
+
+    $user_query = new WP_User_Query([
+        'meta_key'   => 'xoo_ml_phone_no', // Change this to your actual meta key
+        'meta_value' => $mobile,
+        'number'     => 1,
+    ]);
+
+    $users = $user_query->get_results();
+
+    if (empty($users)) {
+        wp_send_json_error('User not found!', 400);
+    }
+
+    $user = $users[0];
+
+    // Log in the user
+    wp_set_current_user($user->ID);
+    wp_set_auth_cookie($user->ID);
+    wp_send_json_success(['message' => 'Login successful']);
+}
+
+add_action('wp_ajax_send_otp_email', 'send_otp_email'); // For mobile
+add_action('wp_ajax_nopriv_send_otp_email', 'send_otp_email'); // For mobile
+function send_otp_email() {
+    if (!isset($_POST['email'])) {
+        wp_send_json_error('Email address is required');
+    }
+
+    $email = sanitize_text_field($_POST['email']);
+    $user = get_user_by('email', $email);
+
+    if (!$user || is_wp_error($user)) {
+        wp_send_json_error('Invalid email address');
+    }
+    $otp = sanitize_text_field($_POST['otp']);
+    $subject = "Your OTP Code";
+    $message = "Your OTP for verification is: <strong>{$otp}</strong>. This code is valid for 3 minutes.";
+    $headers = ['Content-Type: text/html; charset=UTF-8'];
+    if (wp_mail($email, $subject, $message, $headers)) {
+        wp_send_json_success(['message' => 'OTP sent to tour email!']);
+    } else {
+        wp_send_json_error(['message' => 'Failed to send OTP.']);
+    }
+
+    wp_die(); // Terminate AJAX request
+}
+
+add_action('wp_ajax_email_login', 'handle_email_login'); // For logged-in users
+add_action('wp_ajax_nopriv_email_login', 'handle_email_login'); // For non-logged-in users
+function handle_email_login() {
+    // Check if email and password are set
+    if (!isset($_POST['email'])) {
+        wp_send_json_error('Email are required');
+    }
+
+    $email = sanitize_email($_POST['email']);
+    $otp = sanitize_text_field($_POST['otp']);
+
+    if (!isset($_COOKIE['otp']) || $_COOKIE['otp'] != $otp) {
+        wp_send_json_error('Invalid OTP!', 400);
+    }
+
+    // Authenticate user
+    $user = get_user_by('email', $email);
+    if (is_wp_error($user)) {
+        wp_send_json_error('Invalid email address');
+    }
+
+    wp_set_current_user($user->ID);
+    wp_set_auth_cookie($user->ID); // Set the authentication cookie
+
+    wp_send_json_success('Login successful');
+    wp_die(); // Terminate AJAX request
+}
+
+// Apply Coupon and Return Discount + Total Cart Amount
+add_action('wp_ajax_apply_coupon', 'apply_coupon_ajax');
+add_action('wp_ajax_nopriv_apply_coupon', 'apply_coupon_ajax');
+
+function apply_coupon_ajax() {
     if (!isset($_POST['coupon_code'])) {
-        wp_send_json_error(['message' => 'Coupon code is required']);
+        wp_send_json_error(['message' => 'No coupon provided']);
     }
 
     $coupon_code = sanitize_text_field($_POST['coupon_code']);
     WC()->cart->apply_coupon($coupon_code);
     WC()->cart->calculate_totals();
 
-    if (in_array($coupon_code, WC()->cart->get_applied_coupons())) {
-        wp_send_json_success([
-            'discount' => WC()->cart->get_cart_discount_total(),
-            'coupon' => $coupon_code
-        ]);
-    } else {
-        wp_send_json_error(['message' => 'Invalid or expired coupon']);
-    }
+    $discount_amount = WC()->cart->get_coupon_discount_amount($coupon_code);
+
+    wp_send_json_success([
+        'discount' => wc_price($discount_amount),
+        'total' => WC()->cart->get_total() // Return total price after discount
+    ]);
 }
-function check_applied_coupon() {
-    $coupons = WC()->cart->get_applied_coupons();
-    if (!empty($coupons)) {
-        wp_send_json_success([
-            'coupon' => $coupons[0],
-            'discount' => WC()->cart->get_cart_discount_total()
-        ]);
-    } else {
-        wp_send_json_success(['coupon' => null]);
-    }
-}
-function remove_coupon() {
-    foreach (WC()->cart->get_applied_coupons() as $coupon) {
+
+// Remove All Coupons and Return Updated Cart Total
+add_action('wp_ajax_remove_all_coupons', 'remove_all_coupons_ajax');
+add_action('wp_ajax_nopriv_remove_all_coupons', 'remove_all_coupons_ajax');
+
+function remove_all_coupons_ajax() {
+    $applied_coupons = WC()->cart->get_applied_coupons();
+    foreach ($applied_coupons as $coupon) {
         WC()->cart->remove_coupon($coupon);
     }
     WC()->cart->calculate_totals();
-    wp_send_json_success();
+    wp_send_json_success([
+        'total' => WC()->cart->get_total()
+    ]);
 }
 
+add_action('wp_ajax_place_order', 'place_order');
+add_action('wp_ajax_nopriv_place_order', 'place_order');
 function place_order() {
     if (!isset($_POST['payment_method'], $_POST['shipping_method'], $_POST['shipping_address'])) {
         wp_send_json_error(['message' => 'Incomplete order data.']);
@@ -234,6 +266,27 @@ function place_order() {
     // Send success response
     wp_send_json_success(['message' => 'Order placed successfully!']);
     WC()->cart->empty_cart();
+}
+
+add_action('wp_ajax_update_shipping', 'update_shipping');
+add_action('wp_ajax_nopriv_update_shipping', 'update_shipping');
+
+function update_shipping() {
+    if (!isset($_POST['shipping_method'])) {
+        wp_send_json_error(['message' => 'Shipping method not provided.']);
+    }
+
+    $shipping_method = sanitize_text_field($_POST['shipping_method']);
+    $packages = WC()->shipping()->get_packages();
+
+    // Set the selected shipping method in WooCommerce session
+    WC()->session->set('chosen_shipping_methods', [$shipping_method]);
+
+    // Recalculate totals
+    WC()->cart->calculate_totals();
+
+    $new_total = WC()->cart->get_total(); // Get updated total
+    wp_send_json_success(['total' => $new_total]);
 }
 
 

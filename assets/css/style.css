@@ -209,9 +209,11 @@
 }
 
 /*Coupon Section*/
-.discountMessage {
+#coupon_wrap .coupon-items {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #d5d0d0;
     padding: 10px;
-    border: 1px solid gray;
 }
 
 /*checkout section*/
