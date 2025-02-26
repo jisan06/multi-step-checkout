@@ -9,19 +9,8 @@ function send_otp() {
     if (!isset($_POST['mobile_number'])) {
         wp_send_json_error('Mobile number is required');
     }
-
     $mobile_number = sanitize_text_field($_POST['mobile_number']);
     $otp = sanitize_text_field($_POST['otp']);
-
-    $user_query = new WP_User_Query([
-        'meta_key'   => 'xoo_ml_phone_no', // Change this to your actual meta key
-        'meta_value' => $mobile_number,
-        'number'     => 1,
-    ]);
-    $users = $user_query->get_results();
-    if (empty($users)) {
-        wp_send_json_error('Mobile number not found!');
-    }
 
     // Twilio credentials
     $sid = 'AC7d242030987be8cc3748c9efbf150fc5';
@@ -88,12 +77,25 @@ function msc_mobile_login() {
     ]);
 
     $users = $user_query->get_results();
+    $user  = !empty($users) ? $users[0] : '';
+    if (empty($user)) {
+        $username = 'user_' . $mobile; // Generate username from mobile number
+        $random_password = wp_generate_password(); // Generate a random password
+        $user_id = wp_create_user($username, $random_password, "{$mobile}@example.com");
 
-    if (empty($users)) {
-        wp_send_json_error('User not found!', 400);
+        if (is_wp_error($user_id)) {
+            echo 'Error creating user.';
+            exit;
+        }
+
+        // Set user role to 'customer'
+        wp_update_user(['ID' => $user_id, 'role' => 'customer']);
+
+        // Store mobile number in user meta
+        update_user_meta($user_id, 'mobile_number', $mobile);
+
+        $user = get_user_by('ID', $user_id);
     }
-
-    $user = $users[0];
 
     // Log in the user
     wp_set_current_user($user->ID);
@@ -109,11 +111,7 @@ function send_otp_email() {
     }
 
     $email = sanitize_text_field($_POST['email']);
-    $user = get_user_by('email', $email);
 
-    if (!$user || is_wp_error($user)) {
-        wp_send_json_error('Invalid email address');
-    }
     $otp = sanitize_text_field($_POST['otp']);
     $subject = "Your OTP Code";
     $message = "Your OTP for verification is: <strong>{$otp}</strong>. This code is valid for 3 minutes.";
@@ -144,8 +142,17 @@ function handle_email_login() {
 
     // Authenticate user
     $user = get_user_by('email', $email);
-    if (is_wp_error($user)) {
-        wp_send_json_error('Invalid email address');
+    if (empty($user)) {
+        $username = explode('@', $email)[0]; // Use email prefix as username
+        $random_password = wp_generate_password(); // Generate a random password
+        $user_id = wp_create_user($username, $random_password, $email);
+
+        if (is_wp_error($user_id)) {
+            echo 'Error creating user.';
+            exit;
+        }
+        wp_update_user(['ID' => $user_id, 'role' => 'customer']);
+        $user = get_user_by('ID', $user_id);
     }
 
     wp_set_current_user($user->ID);
@@ -191,10 +198,32 @@ function remove_all_coupons_ajax() {
     ]);
 }
 
+add_action('wp_ajax_update_shipping', 'update_shipping');
+add_action('wp_ajax_nopriv_update_shipping', 'update_shipping');
+
+function update_shipping() {
+    if (!isset($_POST['shipping_method'])) {
+        wp_send_json_error(['message' => 'Shipping method not provided.']);
+    }
+
+    $shipping_method = sanitize_text_field($_POST['shipping_method']);
+    $packages = WC()->shipping()->get_packages();
+
+    // Set the selected shipping method in WooCommerce session
+    WC()->session->set('chosen_shipping_methods', [$shipping_method]);
+
+    // Recalculate totals
+    WC()->cart->calculate_totals();
+
+    $new_total = WC()->cart->get_total(); // Get updated total
+    wp_send_json_success(['total' => $new_total]);
+}
+
+//Place order
 add_action('wp_ajax_place_order', 'place_order');
 add_action('wp_ajax_nopriv_place_order', 'place_order');
 function place_order() {
-    if (!isset($_POST['payment_method'], $_POST['shipping_method'], $_POST['shipping_address'])) {
+    if (!isset($_POST['shipping_method'], $_POST['shipping_address'])) {
         wp_send_json_error(['message' => 'Incomplete order data.']);
         return;
     }
@@ -218,7 +247,14 @@ function place_order() {
     foreach ($cart as $cart_item_key => $cart_item) {
         $product = $cart_item['data'];
         $quantity = $cart_item['quantity'];
-        $order->add_product($product, $quantity);
+        $item_id = $order->add_product($product, $quantity);
+        $order_item = $order->get_item($item_id);
+        $item_data = [];
+        $cart_item_data = apply_filters( 'woocommerce_get_item_data', $item_data, $cart_item );
+        if (!empty($cart_item_data[0]['value'])) {
+            $order_item->update_meta_data('order_meta_bundle_data', $cart_item_data[0]['value']);
+            $order_item->save();
+        }
     }
 
     // Set the order shipping methods
@@ -247,11 +283,15 @@ function place_order() {
         'phone' => $contact_number, // Save phone number
     ], 'shipping');
 
-    $order->update_meta_data('receipt_date', $receipt_date);
-    $order->update_meta_data('delivery_time', $delivery_time);
+    if( $receipt_date ) {
+        $order->update_meta_data('receipt_date', $receipt_date);
+    }
+    if( $delivery_time ) {
+        $order->update_meta_data('delivery_time', $delivery_time);
+    }
 
     // Set payment method
-    $order->set_payment_method($payment_method);
+//    $order->set_payment_method($payment_method);
 
     // Apply coupon code if provided
     if (!empty($coupon_code)) {
@@ -263,31 +303,71 @@ function place_order() {
     // Update order status
     $order->update_status('pending'); // Or 'completed', depending on your workflow
 
+    $payment_url = get_qfpay_payment_url($order->get_id(), $order->get_total());
+
+//    if (!$payment_url) {
+//        wp_send_json_error('Payment initiation failed.');
+//    }
+
+//    WC()->cart->empty_cart();
     // Send success response
-    wp_send_json_success(['message' => 'Order placed successfully!']);
-    WC()->cart->empty_cart();
+    wp_send_json_success(['redirect_url' => $payment_url]);
 }
 
-add_action('wp_ajax_update_shipping', 'update_shipping');
-add_action('wp_ajax_nopriv_update_shipping', 'update_shipping');
+function get_qfpay_payment_url($order_id, $total) {
+    $callback_url = home_url('/wp-admin/admin-ajax.php?action=qfpay_payment_callback');
+    $request_data = [
+        'order_id' => $order_id,
+        'amount' => $total,
+        'callback_url' => $callback_url,
+        'return_url' => home_url('/custom-checkout?step=3&order_id=' . $order_id .'&status=paid'),
+    ];
 
-function update_shipping() {
-    if (!isset($_POST['shipping_method'])) {
-        wp_send_json_error(['message' => 'Shipping method not provided.']);
+    $response = wp_remote_post('https://qfpay-api.com/payment', [
+        'body'    => json_encode($request_data),
+        'headers' => ['Content-Type' => 'application/json'],
+    ]);
+
+    if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) == 200) {
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        return $body['payment_url'] ?? false;
     }
 
-    $shipping_method = sanitize_text_field($_POST['shipping_method']);
-    $packages = WC()->shipping()->get_packages();
-
-    // Set the selected shipping method in WooCommerce session
-    WC()->session->set('chosen_shipping_methods', [$shipping_method]);
-
-    // Recalculate totals
-    WC()->cart->calculate_totals();
-
-    $new_total = WC()->cart->get_total(); // Get updated total
-    wp_send_json_success(['total' => $new_total]);
+    return false;
 }
 
+add_action('wp_ajax_nopriv_qfpay_payment_callback', 'qfpay_payment_callback');
+function qfpay_payment_callback() {
+    $order_id = $_POST['order_id'] ?? '';
+    $status = $_POST['status'] ?? '';
+
+    if ($order_id && $status === 'paid') {
+        $order = wc_get_order($order_id);
+        if ($order) {
+            $order->update_status('completed');
+        }
+    }
+
+    wp_send_json_success(['message' => 'Payment updated successfully.']);
+}
+
+add_action('woocommerce_after_order_itemmeta', 'display_meta_after_order_name', 10, 3);
+function display_meta_after_order_name($item_id, $item, $product) {
+    $bundle_data = $item->get_meta('order_meta_bundle_data');
+    if (!empty($bundle_data)) {
+        echo '<div class="product-bundle-data">' . wp_kses_post($bundle_data) . '</div>';
+    }
+}
+
+add_filter('woocommerce_order_item_get_formatted_meta_data', 'remove_custom_data', 10, 1);
+
+function remove_custom_data($formatted_meta) {
+    foreach ($formatted_meta as $key => $meta) {
+        if ($meta->key === 'order_meta_bundle_data') {
+            unset($formatted_meta[$key]);
+        }
+    }
+    return $formatted_meta;
+}
 
 

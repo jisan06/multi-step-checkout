@@ -15,13 +15,13 @@ jQuery(document).ready(function ($) {
         $(".step").not(":nth-child(" + currentStep + ")").removeClass("disabled");
     }
 
-    $("#nextStep").click(function () {
-        if (currentStep === 2) {
-            currentStep++;
-            showStep(currentStep);
-            $('#backButton').hide();
-        }
-    });
+    // $("#checkoutBtn").click(function () {
+    //     if (currentStep === 2) {
+    //         currentStep++;
+    //         showStep(currentStep);
+    //         $('#backButton').hide();
+    //     }
+    // });
 
     $("#backButton").click(function () {
        if (currentStep === 2) {
@@ -212,6 +212,7 @@ jQuery(document).ready(function ($) {
 
 jQuery(document).ready(function($) {
     $('input[name="shipping_method"]').on('click', function() {
+        $("#placeOrderButton").removeClass('disabled');
         // Hide elements
         $('.shipping-fields').hide();
         $('.cart-items-wrap').hide();
@@ -296,64 +297,77 @@ jQuery(document).ready(function ($) {
 //place order
 jQuery(document).ready(function($) {
     $('#placeOrderButton').on('click', function(e) {
-        e.preventDefault(); // Prevent the default form submission
+        e.preventDefault(); // Prevent default form submission
 
         // Collect the selected payment method
-        var selectedPaymentMethod = $('input[name="payment_method"]:checked').val();
-        if (!selectedPaymentMethod) {
-            alert('Please select a payment method.');
+        // var selectedPaymentMethod = $('input[name="payment_method"]:checked').val();
+        // if (!selectedPaymentMethod) {
+        //     alert('Please select a payment method.');
+        //     return;
+        // }
+
+        // Collect selected shipping method
+        var shippingMethod = $('input[name="shipping_method"]:checked').val();
+        if (!shippingMethod) {
+            alert('Please select a shipping method.');
             return;
         }
 
-        // Collect shipping details
-        var shippingMethod = $('input[name="shipping_method"]:checked').val();
-        var shippingAddress = $('.shipping-address').val();
-        var contactNumber = $('.shipping-number').val();
+        // Find the corresponding shipping fields container
+        var shippingContainer = $('.shipping-fields[data-method-id="' + shippingMethod + '"]');
 
-        // Collect additional fields
-        var country = $('#calc_shipping_country').val();
-        var state = $('#calc_shipping_state').val();
-        var receiptDate = $('.shipping-receipt-date').val();
-        var deliveryTime = $('.shipping-time').val();
+        // Retrieve relevant values based on selected shipping method
+        var shippingAddress = shippingContainer.find('.shipping-address').val();
+        var contactNumber = shippingContainer.find('.shipping-number').val();
+        var country = shippingContainer.find('#calc_shipping_country').val();
+        var state = shippingContainer.find('#calc_shipping_state').val();
+        var receiptDate = shippingContainer.find('.shipping-receipt-date').val();
+        var deliveryTime = shippingContainer.find('.shipping-time').val();
 
-        // Additional data you may need from Step 2 and Step 3
-        var couponCode = $('#couponCode').val(); // Collect the coupon code
+        var couponCode = $('#couponCode').val(); // Get coupon code
+
+        // Validate required fields
+        if (!shippingAddress || !contactNumber || !country || !state) {
+            alert('Please fill in all required shipping details.');
+            return;
+        }
+
+        // Order data object
         var orderData = {
             action: 'place_order',
-            payment_method: selectedPaymentMethod,
+            // payment_method: selectedPaymentMethod,
             shipping_method: shippingMethod,
             shipping_address: shippingAddress,
-            country: country, // Include country
-            state: state, // Include state
+            country: country,
+            state: state,
             contact_number: contactNumber,
             coupon_code: couponCode,
-            receipt_date: receiptDate, // Include receipt date
+            receipt_date: receiptDate,
             delivery_time: deliveryTime,
         };
 
-        // Send an AJAX request to place the order
+        // Send AJAX request to place order
         $.ajax({
-            url: msc_core.ajaxurl, // WooCommerce AJAX URL
+            url: msc_core.ajaxurl,
             type: 'POST',
             data: orderData,
             beforeSend: function() {
-                $('#placeOrderButton').text('Placing Order...'); // Change button text while processing
+                $('#placeOrderButton').text('Placing Order...');
             },
             success: function(response) {
-                if (response.success) {
-                    // Hide the form and show success message
-                    $('.payment-methods-container').hide();
-                    $('.msc-checkout-form .order-success').show();
-                } else {
-                    alert(response.data.message); // Show error message
+                if (response.success && response.data.redirect_url) {
+                    // $('.payment-methods-container').hide();
+                    // $('.msc-checkout-form .order-success').show();
+                    window.location.href = response.data.redirect_url;
                 }
             },
-            complete: function() {
-                $('#placeOrderButton').text('Place Order'); // Reset button text
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
             }
         });
     });
 });
+
 
 
 

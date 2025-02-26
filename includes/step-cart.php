@@ -7,6 +7,7 @@ global $woocommerce;
 
 // Get WooCommerce cart contents
 $cart = WC()->cart->get_cart();
+$cart_count = WC()->cart->get_cart_contents_count();
 $shipping_zones = WC_Shipping_Zones::get_zones();
 $active_shipping_methods = [];
 
@@ -36,6 +37,8 @@ foreach ($shipping_zones as $zone) {
         <div>Your Order</div>
         <?php if ( !empty($cart) ) : ?>
             <?php foreach ($cart as $cart_item_key => $cart_item) :
+                $item_data = [];
+                $cart_item_data = apply_filters( 'woocommerce_get_item_data', $item_data, $cart_item );
                 $product = $cart_item['data'];
                 $quantity = $cart_item['quantity'];
                 $subtotal = $product->get_price() * $quantity;
@@ -51,7 +54,7 @@ foreach ($shipping_zones as $zone) {
                                 <?php echo esc_html($product->get_name()); ?>
                             </div>
                             <div>
-                                <?php echo wc_get_formatted_cart_item_data( $cart_item ); ?>
+                                <?php echo !empty($cart_item_data[0]['value']) ? $cart_item_data[0]['value'] : ''; ?>
                             </div>
                         </div>
                         <div class="cart-item-qty">
@@ -89,7 +92,7 @@ foreach ($shipping_zones as $zone) {
                     <input
                         type="radio"
                         name="shipping_method" value="<?php echo $method_id; ?>"
-                        id="<?php echo $method_id; ?>" <?php echo $checked; ?>
+                        id="<?php echo $method_id; ?>" <?php /*echo $checked; */?>
                         data-cost="<?php echo esc_attr($method['cost']); ?>"
                     >
                     <label for="<?php echo $method_id; ?>">
@@ -113,17 +116,19 @@ foreach ($shipping_zones as $zone) {
 
 <?php include MSC_PLUGIN_PATH . 'includes/cart/coupon.php'; ?>
 
+<?php if( $cart_count > 0 ){ ?>
 <div class="msc-nav">
     <div class="msc-nav-left">
         <div class="msc-nav-qty">
-            <span class="dashicons dashicons-cart"></span> <?php echo WC()->cart->get_cart_contents_count(); ?>
+            <span class="dashicons dashicons-cart"></span> <?php echo $cart_count; ?>
         </div>
         <div class="msc-nav-total">
             <?php echo WC()->cart->get_total(); ?>
         </div>
     </div>
-    <button id="nextStep">Checkout</button>
+    <button id="placeOrderButton" class="disabled">Checkout</button>
 </div>
+<?php } ?>
 
 
 

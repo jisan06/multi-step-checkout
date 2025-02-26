@@ -23,6 +23,7 @@
                     ?>
                     <p class="form-row form-row-wide" id="calc_shipping_country_field">
                         <label for="calc_shipping_country"><?php esc_html_e( 'Area', 'woocommerce' ); ?></label>
+                        <input type="hidden" name="calc_shipping_country" id="calc_shipping_country" value="<?php echo $region_short; ?>">
                         <select name="calc_shipping_state" class="state_select" id="calc_shipping_state" data-placeholder="<?php esc_attr_e( 'State', 'woocommerce' ); ?>">
                             <option value=""><?php esc_html_e( 'Select an option&hellip;', 'woocommerce' ); ?></option>
                             <?php

@@ -166,6 +166,12 @@
     align-items: center;
     gap: 15px;
 }
+.msc-nav #placeOrderButton.disabled {
+    background-color: #7B7B7B;
+    color: #fff;
+    border: none;
+    pointer-events: none;
+}
 
 /*Shipping methods*/
 .shipping-methods {
