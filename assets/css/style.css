@@ -286,3 +286,10 @@
 .hidden {
     display: none;
 }
+
+
+/*catalog page*/
+#woosb-multi-add-to-cart.disabled {
+    background-color: #7B7B7B !important;
+    pointer-events: none;
+}

@@ -368,6 +368,32 @@ jQuery(document).ready(function($) {
     });
 });
 
+jQuery(document).ready(function($) {
+    //cart button update
+    $(document).on('click',  '.woosb-quantity-plus', function () {
+        updateAddToCartButton();
+    })
+    $(document).on('click',  '.woosb-quantity-minus', function () {
+        updateAddToCartButton();
+    })
+
+    // Update button state based on total quantity
+    function updateAddToCartButton() {
+        let totalQty = 0;
+        $('.woosb-quantity .woosb-quantity-input').each(function() {
+            let quantity = parseInt($(this).val());
+            totalQty += quantity;
+        });
+
+        // Enable or disable the button based on total quantity
+        if (totalQty >= 6) {
+            $('#woosb-multi-add-to-cart').removeClass('disabled');
+        } else {
+            $('#woosb-multi-add-to-cart').addClass('disabled');
+        }
+    }
+});
+
 
 
 

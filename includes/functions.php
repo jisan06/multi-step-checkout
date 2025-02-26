@@ -250,11 +250,29 @@ function place_order() {
         $item_id = $order->add_product($product, $quantity);
         $order_item = $order->get_item($item_id);
         $item_data = [];
+        $total_kcal = 0;
         $cart_item_data = apply_filters( 'woocommerce_get_item_data', $item_data, $cart_item );
         if (!empty($cart_item_data[0]['value'])) {
             $order_item->update_meta_data('order_meta_bundle_data', $cart_item_data[0]['value']);
-            $order_item->save();
         }
+        if (have_rows('bundle_sub_products', $product->get_id())) {
+            while (have_rows('bundle_sub_products', $product->get_id())) {
+                the_row();
+                $sub_product = get_sub_field('sub_product');
+                $sub_quantity = get_sub_field('quantity');
+
+                if ($sub_product) {
+                    $sub_product_obj = wc_get_product($sub_product);
+                    $sub_product_kcal = (int) $sub_product_obj->get_attribute('kcal');
+
+                    if ($sub_product_kcal) {
+                        $total_kcal += ($sub_product_kcal * $sub_quantity);
+                    }
+                }
+            }
+        }
+        $order_item->update_meta_data('total_kcal', $total_kcal);
+        $order_item->save();
     }
 
     // Set the order shipping methods
@@ -353,7 +371,11 @@ function qfpay_payment_callback() {
 
 add_action('woocommerce_after_order_itemmeta', 'display_meta_after_order_name', 10, 3);
 function display_meta_after_order_name($item_id, $item, $product) {
+    $total_kcal = $item->get_meta('total_kcal');
     $bundle_data = $item->get_meta('order_meta_bundle_data');
+    if (!empty($total_kcal)) {
+        echo '<div class="product-kcal">' . $total_kcal . 'Kcal</div>';
+    }
     if (!empty($bundle_data)) {
         echo '<div class="product-bundle-data">' . wp_kses_post($bundle_data) . '</div>';
     }
@@ -364,6 +386,8 @@ add_filter('woocommerce_order_item_get_formatted_meta_data', 'remove_custom_data
 function remove_custom_data($formatted_meta) {
     foreach ($formatted_meta as $key => $meta) {
         if ($meta->key === 'order_meta_bundle_data') {
+            unset($formatted_meta[$key]);
+        }elseif ($meta->key === 'total_kcal') {
             unset($formatted_meta[$key]);
         }
     }
