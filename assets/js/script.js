@@ -369,6 +369,8 @@ jQuery(document).ready(function($) {
 });
 
 jQuery(document).ready(function($) {
+    let cartCount = msc_core.cart_count;
+    let totalQty = 0;
     //cart button update
     $(document).on('click',  '.woosb-quantity-plus', function () {
         updateAddToCartButton();
@@ -376,22 +378,28 @@ jQuery(document).ready(function($) {
     $(document).on('click',  '.woosb-quantity-minus', function () {
         updateAddToCartButton();
     })
+    $(document).on('input',  '.woosb-quantity-input', function () {
+        updateAddToCartButton();
+    })
 
     // Update button state based on total quantity
     function updateAddToCartButton() {
-        let totalQty = 0;
         $('.woosb-quantity .woosb-quantity-input').each(function() {
             let quantity = parseInt($(this).val());
             totalQty += quantity;
         });
-
         // Enable or disable the button based on total quantity
-        if (totalQty >= 6) {
+        if (totalQty >= 6 || cartCount >= 6) {
             $('#woosb-multi-add-to-cart').removeClass('disabled');
         } else {
             $('#woosb-multi-add-to-cart').addClass('disabled');
         }
     }
+
+    $(document.body).on('wc_fragments_refresh', function() {
+        cartCount = totalQty
+    });
+
 });
 
 

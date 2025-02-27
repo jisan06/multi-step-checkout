@@ -28,6 +28,7 @@ function msc_enqueue_scripts() {
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('msc_nonce'),
         'is_logged_in' => is_user_logged_in(),
+        'cart_count' => WC()->cart->get_cart_contents_count(),
     ));
 }
 add_action('wp_enqueue_scripts', 'msc_enqueue_scripts');
