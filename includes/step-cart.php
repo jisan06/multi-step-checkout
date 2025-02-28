@@ -31,6 +31,15 @@ foreach ($shipping_zones as $zone) {
         }
     }
 }
+
+    $applied_coupons = WC()->cart->get_applied_coupons();
+    $discount_total = 0;
+
+    if (!empty($applied_coupons)) {
+        foreach ($applied_coupons as $coupon_code) {
+            $discount_total += WC()->cart->get_coupon_discount_amount($coupon_code);
+        }
+    }
 ?>
 <div class="cart-items-wrap">
     <div class="cart-items">
@@ -63,7 +72,20 @@ foreach ($shipping_zones as $zone) {
                     </div>
                     <div class="cart-item-footer">
                         <div class="cart-item-left">
-                            <?php echo wc_price($product->get_price()); ?>
+                            <?php
+                                echo wc_price($product->get_price());
+                                $tags = get_the_terms($product->get_id(), 'product_tag');
+                                if ($tags && !is_wp_error($tags)) {
+                                    echo '<div class="woosb-tags">';
+                                    foreach ($tags as $tag) {
+                                        $tag_bg_color = get_field('tag_bg_color', 'product_tag_' . $tag->term_id); // Fetch ACF color
+                                        $tag_style    = $tag_bg_color ? 'background-color:' . esc_attr($tag_bg_color) . '; color: #fff; padding: 5px 10px; margin: 2px; border-radius: 5px; display: inline-block;' : '';
+
+                                        echo '<span class="woosb-tag" style="' . $tag_style . '">' . esc_html($tag->name) . '</span>';
+                                    }
+                                    echo '</div>';
+                                }
+                            ?>
                         </div>
                         <div class="cart-item-right">
                             <?php echo wc_price($subtotal); ?>
@@ -77,11 +99,18 @@ foreach ($shipping_zones as $zone) {
     </div>
 
     <!-- Shipping Methods Section -->
-    <button id="toggleShipping">Shipping Methods</button>
+    <div class="toggleShipWrap">
+        <button id="toggleShipping">Shipping Methods</button>
+        <div id="selectedShippingMethod"></div>
+    </div>
 
     <!-- Coupon Toggle Section -->
     <div class="coupon-section">
         <button id="toggleCoupon" class="toggle-button">Coupon</button>
+        <div id="appliedCoupon" <?php if(!$discount_total) { ?>style="display:none" <?php } ?>>
+            1 coupon used =
+            <span class="coupon-amount"><?php echo $discount_total; ?></span>
+        </div>
     </div>
 </div>
 

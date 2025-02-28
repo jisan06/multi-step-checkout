@@ -217,6 +217,8 @@ jQuery(document).ready(function ($) {
     $('input[name="shipping_method"]').on('change', function() {
         $(".shipping-methods .next-step").removeClass('disabled');
         $("#placeOrderButton").removeClass('disabled');
+        var shipLabel = $(this).parents('.shipping-method:first').find('.shipping-label').text()
+        $('#selectedShippingMethod').text(shipLabel)
         // // Hide elements
         // $('.shipping-fields').hide();
         // $('.cart-items-wrap').hide();
@@ -248,7 +250,7 @@ jQuery(document).ready(function ($) {
 
     function cartPage() {
         $('.cart-items-wrap').show();
-        $('#toggleShipping').show();
+        $('.toggleShipWrap').show();
         $('#coupon_wrap').hide();
         $('.shipping-fields').hide();
         $('.msc-nav').show();
@@ -257,7 +259,7 @@ jQuery(document).ready(function ($) {
         $('.shipping-methods').hide();
     }
     function shippingMethodShow() {
-        $('#toggleShipping').hide();
+        $('.toggleShipWrap').hide();
         $('#backButton').show();
         $('.shipping-methods').show();
         $('.shipping-fields').hide();
@@ -317,6 +319,8 @@ jQuery(document).ready(function ($) {
                     $('#discountAmount').html(response.data.discount);
                     $('.msc-nav-total').html(response.data.total); // Update total cart amount
                     $('#coupon_summary').show();
+                    $('#appliedCoupon .coupon-amount').html(response.data.discount);
+                    $('#appliedCoupon').show();
                 } else {
                     alert(response.message);
                 }
@@ -421,7 +425,8 @@ jQuery(document).ready(function ($) {
     });
 
 
-    let cartCount = msc_core.cart_count;
+    let cartAdded = false;
+    let cartCount = Number(msc_core.cart_count);
     let totalQty = 0;
     //cart button update
     $(document).on('click',  '.woosb-quantity-plus', function () {
@@ -436,21 +441,17 @@ jQuery(document).ready(function ($) {
 
     // Update button state based on total quantity
     function updateAddToCartButton() {
+        totalQty = 0
         $('.woosb-quantity .woosb-quantity-input').each(function() {
             let quantity = parseInt($(this).val());
             totalQty += quantity;
         });
-        // Enable or disable the button based on total quantity
         if (totalQty >= 6 || cartCount >= 6) {
             $('#woosb-multi-add-to-cart').removeClass('disabled');
         } else {
             $('#woosb-multi-add-to-cart').addClass('disabled');
         }
     }
-
-    $(document.body).on('wc_fragments_refresh', function() {
-        cartCount = totalQty
-    });
 
 });
 
