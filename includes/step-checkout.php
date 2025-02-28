@@ -37,5 +37,6 @@ if (isset($_GET['step']) && $_GET['step'] == 3) {
 <!--        --><?php //endif; ?>
 <!--        <button type="submit" id="placeOrderButton">Place Order</button>-->
 <!--    </div>-->
-    <div class="order-success">Your order has been placed successfully!</div>
+    <div class="order-success" style="display:none;">Your order has been placed successfully!</div>
+    <div class="pay-screen">Payment Screen will appear here!</div>
 </div>

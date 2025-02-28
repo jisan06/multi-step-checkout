@@ -77,34 +77,7 @@ foreach ($shipping_zones as $zone) {
     </div>
 
     <!-- Shipping Methods Section -->
-    <div class="shipping-methods">
-        <h3>Shipping Methods</h3>
-        <?php
-        $chosen_shipping_methods = WC()->session->get('chosen_shipping_methods');
-        $default_shipping_method = !empty($chosen_shipping_methods) ? $chosen_shipping_methods[0] : '';
-
-        if (!empty($active_shipping_methods)) {
-            foreach ($active_shipping_methods as $method) {
-                $method_id = esc_attr($method['id']);
-                $checked = ($method_id === $default_shipping_method || strpos($default_shipping_method, $method_id) === 0) ? 'checked' : '';
-                ?>
-                <div class="shipping-method" data-method-id="<?php echo $method_id; ?>">
-                    <input
-                        type="radio"
-                        name="shipping_method" value="<?php echo $method_id; ?>"
-                        id="<?php echo $method_id; ?>" <?php /*echo $checked; */?>
-                        data-cost="<?php echo esc_attr($method['cost']); ?>"
-                    >
-                    <label for="<?php echo $method_id; ?>">
-                        <?php echo esc_html($method['title']); ?> - <?php echo wc_price($method['cost']); ?>
-                    </label>
-                    <span class="arrow">→</span> <!-- Right arrow -->
-                </div>
-                <?php
-            }
-        }
-        ?>
-    </div>
+    <button id="toggleShipping">Shipping Methods</button>
 
     <!-- Coupon Toggle Section -->
     <div class="coupon-section">

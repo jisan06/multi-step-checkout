@@ -15,21 +15,18 @@ jQuery(document).ready(function ($) {
         $(".step").not(":nth-child(" + currentStep + ")").removeClass("disabled");
     }
 
-    // $("#checkoutBtn").click(function () {
-    //     if (currentStep === 2) {
-    //         currentStep++;
-    //         showStep(currentStep);
-    //         $('#backButton').hide();
-    //     }
-    // });
-
     $("#backButton").click(function () {
        if (currentStep === 2) {
-            $('.cart-items-wrap').show();
-            $('#coupon_wrap').hide();
-            $('.shipping-fields').hide();
+           if ($('.shipping-methods-details .shipping-fields').is(':visible')) {
+               shippingMethodShow();
+           }else {
+               cartPage()
+           }
         }
-        $(this).hide()
+    });
+
+    $('.confirm-data').click(function () {
+        cartPage()
     });
 
     $(".login-tab").click(function () {
@@ -208,24 +205,75 @@ jQuery(document).ready(function ($) {
             });
         }
     });
-});
 
-jQuery(document).ready(function($) {
-    $('input[name="shipping_method"]').on('click', function() {
+
+    $('#toggleShipping').on('click', function() {
+        shippingMethodShow();
+    });
+    $('.shipping-methods .next-step').on('click', function() {
+        shippingMethodFields();
+    })
+
+    $('input[name="shipping_method"]').on('change', function() {
+        $(".shipping-methods .next-step").removeClass('disabled');
         $("#placeOrderButton").removeClass('disabled');
-        // Hide elements
+        // // Hide elements
+        // $('.shipping-fields').hide();
+        // $('.cart-items-wrap').hide();
+        // $('#coupon_wrap').hide();
+        //
+        // // Get the selected method ID
+        // var selectedMethodId = $(this).val();
+        //
+        // // Show the corresponding shipping fields
+        // $('.shipping-methods-details .shipping-fields[data-method-id="' + selectedMethodId + '"]').show();
+        // $('#backButton').show();
+        //
+        // // Trigger WooCommerce to update the cart total via AJAX
+        // $.ajax({
+        //     type: 'POST',
+        //     url: msc_core.ajaxurl,
+        //     data: {
+        //         action: 'update_shipping',
+        //         shipping_method: selectedMethodId,
+        //     },
+        //     success: function(response) {
+        //         if (response.success) {
+        //             // Update the cart total dynamically
+        //             $('.msc-nav-total').html(response.data.total); // Update total cart amount
+        //         }
+        //     }
+        // });
+    });
+
+    function cartPage() {
+        $('.cart-items-wrap').show();
+        $('#toggleShipping').show();
+        $('#coupon_wrap').hide();
+        $('.shipping-fields').hide();
+        $('.msc-nav').show();
+        $(".backButton").hide()
+        $('.confirm-data').hide()
+        $('.shipping-methods').hide();
+    }
+    function shippingMethodShow() {
+        $('#toggleShipping').hide();
+        $('#backButton').show();
+        $('.shipping-methods').show();
         $('.shipping-fields').hide();
         $('.cart-items-wrap').hide();
         $('#coupon_wrap').hide();
+        $('.msc-nav').hide();
+        $('.confirm-data').hide()
+    }
 
-        // Get the selected method ID
-        var selectedMethodId = $(this).val();
-
-        // Show the corresponding shipping fields
+    function shippingMethodFields() {
+        $('.confirm-data').show();
+        $('.shipping-methods').hide();
+        $('.shipping-fields').hide();
+        var selectedMethodId = $('input[name="shipping_method"]:checked').val();
+        $('.shipping-methods-details').show();
         $('.shipping-methods-details .shipping-fields[data-method-id="' + selectedMethodId + '"]').show();
-        $('#backButton').show();
-
-        // Trigger WooCommerce to update the cart total via AJAX
         $.ajax({
             type: 'POST',
             url: msc_core.ajaxurl,
@@ -240,17 +288,18 @@ jQuery(document).ready(function($) {
                 }
             }
         });
-    });
-});
+    }
 
 
-//Coupon section
-jQuery(document).ready(function ($) {
+    //Coupon section
     $('#toggleCoupon').on('click', function () {
+        $('.msc-nav').hide();
         $('.shipping-fields').hide();
         $('.cart-items-wrap').hide();
+        $('.shipping-methods-details').hide();
         $('#coupon_wrap').show();
         $('#backButton').show();
+        $('.confirm-data').show();
     });
     // Apply Coupon
     $('.apply-button').on('click', function () {
@@ -292,10 +341,8 @@ jQuery(document).ready(function ($) {
             }
         });
     });
-});
 
 //place order
-jQuery(document).ready(function($) {
     $('#placeOrderButton').on('click', function(e) {
         e.preventDefault(); // Prevent default form submission
 
@@ -307,7 +354,10 @@ jQuery(document).ready(function($) {
         // }
 
         // Collect selected shipping method
-        var shippingMethod = $('input[name="shipping_method"]:checked').val();
+        var shipping = $('input[name="shipping_method"]:checked');
+        var shippingCost = shipping.data('cost');
+        var shippingTitle = shipping.data('title');
+        var shippingMethod = shipping.val();
         if (!shippingMethod) {
             alert('Please select a shipping method.');
             return;
@@ -337,6 +387,8 @@ jQuery(document).ready(function($) {
             action: 'place_order',
             // payment_method: selectedPaymentMethod,
             shipping_method: shippingMethod,
+            shipping_title: shippingTitle,
+            shipping_cost: shippingCost,
             shipping_address: shippingAddress,
             country: country,
             state: state,
@@ -358,7 +410,8 @@ jQuery(document).ready(function($) {
                 if (response.success && response.data.redirect_url) {
                     // $('.payment-methods-container').hide();
                     // $('.msc-checkout-form .order-success').show();
-                    window.location.href = response.data.redirect_url;
+                    $('.msc-checkout-form .pay-screen').show();
+                    // window.location.href = response.data.redirect_url;
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -366,9 +419,8 @@ jQuery(document).ready(function($) {
             }
         });
     });
-});
 
-jQuery(document).ready(function($) {
+
     let cartCount = msc_core.cart_count;
     let totalQty = 0;
     //cart button update

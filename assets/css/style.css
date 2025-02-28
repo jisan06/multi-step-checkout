@@ -166,7 +166,7 @@
     align-items: center;
     gap: 15px;
 }
-.msc-nav #placeOrderButton.disabled {
+.msc-nav #placeOrderButton.disabled, .shipping-methods .disabled {
     background-color: #7B7B7B;
     color: #fff;
     border: none;
@@ -213,7 +213,6 @@
     padding: .5rem 1rem;
     transition: all .3s;
 }
-
 /*Coupon Section*/
 #coupon_wrap .coupon-items {
     display: flex;

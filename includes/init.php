@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 function msc_checkout_shortcode() {
     ?>
     <div class="msc-checkout">
-        <button id="backButton" style="display: none;">
+        <button id="backButton" class="backButton" style="display: none;">
             <span class="dashicons dashicons-arrow-left-alt2"></span>
         </button>
         <div class="steps">

@@ -231,10 +231,14 @@ function place_order() {
     // Get WooCommerce Cart and Customer data
     $cart = WC()->cart->get_cart();
     $shipping_method = sanitize_text_field($_POST['shipping_method']);
+    $shipping_cost = sanitize_text_field($_POST['shipping_cost']);
+    $shipping_title = sanitize_text_field($_POST['shipping_title']);
     $payment_method = sanitize_text_field($_POST['payment_method']);
     $shipping_address = sanitize_text_field($_POST['shipping_address']);
     $country = sanitize_text_field($_POST['country']); // Get country
+    $country_name = WC()->countries->countries[ $country ];
     $state = sanitize_text_field($_POST['state']); // Get state
+    $state_name = WC()->countries->get_states( $country )[$state];
     $contact_number = sanitize_text_field($_POST['contact_number']);
     $coupon_code = sanitize_text_field($_POST['coupon_code']); // Get coupon code
     $receipt_date = sanitize_text_field($_POST['receipt_date']); // Get receipt date
@@ -278,6 +282,30 @@ function place_order() {
     // Set the order shipping methods
     $shipping_item = new WC_Order_Item_Shipping();
     $shipping_item->set_method_id($shipping_method);
+    $shipping_item->set_method_title($shipping_title . ( $country_name ? '(' . $country_name .')' : '' ));
+    $shipping_item->set_total($shipping_cost);
+
+    $shipping_item->add_meta_data(
+        $shipping_method === 'local_pickup' ? 'Pickup Location' : 'Delivery Location',
+        $country_name
+    );
+    $shipping_item->add_meta_data(
+        $shipping_method === 'local_pickup' ? 'Pickup Address' : 'Delivery Address',
+        $shipping_address .
+        ($state_name ? ', ' . $state_name : '') .
+        ($country_name ? ', ' . $country_name : '')
+    );
+    $shipping_item->add_meta_data('Contact Number', $contact_number);
+    if($shipping_method !== 'local_pickup') {
+        $shipping_item->add_meta_data(
+            'Date of Receipt',
+            $receipt_date
+        );
+        $shipping_item->add_meta_data(
+            'Delivery Time',
+            $delivery_time
+        );
+    }
     $order->add_item($shipping_item);
 
     // Set billing and shipping addresses
@@ -301,13 +329,6 @@ function place_order() {
         'phone' => $contact_number, // Save phone number
     ], 'shipping');
 
-    if( $receipt_date ) {
-        $order->update_meta_data('receipt_date', $receipt_date);
-    }
-    if( $delivery_time ) {
-        $order->update_meta_data('delivery_time', $delivery_time);
-    }
-
     // Set payment method
 //    $order->set_payment_method($payment_method);
 
@@ -321,34 +342,71 @@ function place_order() {
     // Update order status
     $order->update_status('pending'); // Or 'completed', depending on your workflow
 
-    $payment_url = get_qfpay_payment_url($order->get_id(), $order->get_total());
+//    $payment_url = get_qfpay_payment_url($order);
 
 //    if (!$payment_url) {
 //        wp_send_json_error('Payment initiation failed.');
 //    }
 
-//    WC()->cart->empty_cart();
+    WC()->cart->empty_cart(true);
     // Send success response
-    wp_send_json_success(['redirect_url' => $payment_url]);
+    wp_send_json_success(['redirect_url' => 'test']);
 }
 
-function get_qfpay_payment_url($order_id, $total) {
-    $callback_url = home_url('/wp-admin/admin-ajax.php?action=qfpay_payment_callback');
-    $request_data = [
-        'order_id' => $order_id,
-        'amount' => $total,
-        'callback_url' => $callback_url,
-        'return_url' => home_url('/custom-checkout?step=3&order_id=' . $order_id .'&status=paid'),
+function msc_order_shipping_lines( &$order, $chosen_shipping_methods, $packages ) {
+    foreach ( $packages as $package_key => $package ) {
+        if ( isset( $chosen_shipping_methods[ $package_key ], $package['rates'][ $chosen_shipping_methods[ $package_key ] ] ) ) {
+            $shipping_rate            = $package['rates'][ $chosen_shipping_methods[ $package_key ] ];
+            $item                     = new WC_Order_Item_Shipping();
+            $item->legacy_package_key = $package_key; // @deprecated 4.4.0 For legacy actions.
+            $item->set_props(
+                array(
+                    'method_title' => $shipping_rate->label,
+                    'method_id'    => $shipping_rate->method_id,
+                    'instance_id'  => $shipping_rate->instance_id,
+                    'total'        => wc_format_decimal( $shipping_rate->cost ),
+                    'taxes'        => array(
+                        'total' => $shipping_rate->taxes,
+                    ),
+                    'tax_status'   => $shipping_rate->tax_status,
+                )
+            );
+
+            foreach ( $shipping_rate->get_meta_data() as $key => $value ) {
+                $item->add_meta_data( $key, $value, true );
+            }
+
+            // Add item to order and save.
+            $order->add_item( $item );
+        }
+    }
+}
+
+function get_qfpay_payment_url($order) {
+    $payment_data = [
+        'merchant_id' => 'YOUR_QFPAY_MERCHANT_ID',
+        'order_id'    => $order->get_id(),
+        'amount'      => $order->get_total() * 100, // Convert to cents if required
+        'currency'    => get_woocommerce_currency(),
+        'callback_url' => site_url('/qfpay-webhook'), // Webhook to handle payment response
+        'redirect_url' => $order->get_checkout_order_received_url(), // Redirect after payment
     ];
 
-    $response = wp_remote_post('https://qfpay-api.com/payment', [
-        'body'    => json_encode($request_data),
-        'headers' => ['Content-Type' => 'application/json'],
+    $response = wp_remote_post('https://openapi-hk.qfapi.com/checkstand', [
+        'method'    => 'POST',
+        'body'      => json_encode($payment_data),
+        'headers'   => [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer YOUR_QFPAY_API_KEY'
+        ],
     ]);
-
-    if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) == 200) {
-        $body = json_decode(wp_remote_retrieve_body($response), true);
-        return $body['payment_url'] ?? false;
+    $response_body = json_decode(wp_remote_retrieve_body($response), true);
+    print_r('$response_body');
+    print_r($response);
+    exit();
+    if (isset($response_body['payment_url'])) {
+        wp_send_json_success(['redirect_url' => $response_body['payment_url']]);
+        return $response_body['payment_url'];
     }
 
     return false;

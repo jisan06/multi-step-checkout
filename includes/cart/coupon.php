@@ -73,4 +73,5 @@
         <p>You saved: <span id="discountAmount"><?php echo wc_price($discount_total); ?></span></p>
         <button id="removeCoupon" class="remove-button">Remove</button>
     </div>
+    <button class="confirm-data backButton">Confirmation</button>
 </div>
