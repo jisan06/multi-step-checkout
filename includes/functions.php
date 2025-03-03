@@ -452,4 +452,18 @@ function remove_custom_data($formatted_meta) {
     return $formatted_meta;
 }
 
+add_filter( 'woocommerce_locate_template', 'msc_woocommerce_template', 10000, 3 );
+function msc_woocommerce_template( $template, $template_name, $template_path ) {
+    if ( 'cart/mini-cart.php' === $template_name ) {
+        // Define the path to your custom template in the plugin
+        $plugin_template = plugin_dir_path( __FILE__ ) . 'woocommerce/cart/mini-cart.php';
+
+        // If the custom template exists, return it instead of the default
+        if ( file_exists( $plugin_template ) ) {
+            return $plugin_template;
+        }
+    }
+    return $template;
+}
+
 
