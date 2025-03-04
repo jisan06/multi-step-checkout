@@ -292,10 +292,3 @@
     background-color: #7B7B7B !important;
     pointer-events: none;
 }
-
-.elementor-menu-cart__product-image.msc-image {
-    grid-row-end: unset;
-}
-.elementor-menu-cart__product .woosb-price-quantity {
-    gap: 50px;
-}

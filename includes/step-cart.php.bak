@@ -31,19 +31,10 @@ foreach ($shipping_zones as $zone) {
         }
     }
 }
-
-    $applied_coupons = WC()->cart->get_applied_coupons();
-    $discount_total = 0;
-
-    if (!empty($applied_coupons)) {
-        foreach ($applied_coupons as $coupon_code) {
-            $discount_total += WC()->cart->get_coupon_discount_amount($coupon_code);
-        }
-    }
 ?>
 <div class="cart-items-wrap">
     <div class="cart-items">
-        <div class="main-head">你的訂單</div>
+        <div>Your Order</div>
         <?php if ( !empty($cart) ) : ?>
             <?php foreach ($cart as $cart_item_key => $cart_item) :
                 $item_data = [];
@@ -59,10 +50,10 @@ foreach ($shipping_zones as $zone) {
                             <?php echo $product_image; ?>
                         </div>
                         <div class="cart-item-name-wrap">
-                            <div class="main-title">
+                            <div>
                                 <?php echo esc_html($product->get_name()); ?>
                             </div>
-                            <div class="product-sub-items">
+                            <div>
                                 <?php echo !empty($cart_item_data[0]['value']) ? $cart_item_data[0]['value'] : ''; ?>
                             </div>
                         </div>
@@ -71,15 +62,9 @@ foreach ($shipping_zones as $zone) {
                         </div>
                     </div>
                     <div class="cart-item-footer">
-                       <div class="cart-item-left">
-							<?php
-							echo wc_price($product->get_price());
-							$tags = get_the_terms($product->get_id(), 'product_tag');
-							if (!empty($tags[0]->name)) {
-							echo $tags[0]->name;
-							}
-							?>
-						</div>
+                        <div class="cart-item-left">
+                            <?php echo wc_price($product->get_price()); ?>
+                        </div>
                         <div class="cart-item-right">
                             <?php echo wc_price($subtotal); ?>
                         </div>
@@ -92,18 +77,11 @@ foreach ($shipping_zones as $zone) {
     </div>
 
     <!-- Shipping Methods Section -->
-    <div class="toggleShipWrap">
-    <button id="toggleShipping"><span>運送方式</span><span class="shipping-sub">請選擇運送方式</span></button>
-        <div id="selectedShippingMethod"></div>
-    </div>
+    <button id="toggleShipping">Shipping Methods</button>
 
     <!-- Coupon Toggle Section -->
     <div class="coupon-section">
-        <button id="toggleCoupon" class="toggle-button"><span>兌換</span><span class="shipping-sub">請輸入優惠碼或選擇購物現金券</span></button>
-        <div id="appliedCoupon" <?php if(!$discount_total) { ?>style="display:none" <?php } ?>>
-            1 coupon used =
-            <span class="coupon-amount"><?php echo $discount_total; ?></span>
-        </div>
+        <button id="toggleCoupon" class="toggle-button">Coupon</button>
     </div>
 </div>
 
@@ -124,3 +102,6 @@ foreach ($shipping_zones as $zone) {
     <button id="placeOrderButton" class="disabled">立即結帳</button>
 </div>
 <?php } ?>
+
+
+

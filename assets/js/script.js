@@ -217,8 +217,6 @@ jQuery(document).ready(function ($) {
     $('input[name="shipping_method"]').on('change', function() {
         $(".shipping-methods .next-step").removeClass('disabled');
         $("#placeOrderButton").removeClass('disabled');
-        var shipLabel = $(this).parents('.shipping-method:first').find('.shipping-label').text()
-        $('#selectedShippingMethod').text(shipLabel)
         // // Hide elements
         // $('.shipping-fields').hide();
         // $('.cart-items-wrap').hide();
@@ -250,7 +248,7 @@ jQuery(document).ready(function ($) {
 
     function cartPage() {
         $('.cart-items-wrap').show();
-        $('.toggleShipWrap').show();
+        $('#toggleShipping').show();
         $('#coupon_wrap').hide();
         $('.shipping-fields').hide();
         $('.msc-nav').show();
@@ -259,7 +257,7 @@ jQuery(document).ready(function ($) {
         $('.shipping-methods').hide();
     }
     function shippingMethodShow() {
-        $('.toggleShipWrap').hide();
+        $('#toggleShipping').hide();
         $('#backButton').show();
         $('.shipping-methods').show();
         $('.shipping-fields').hide();
@@ -319,8 +317,6 @@ jQuery(document).ready(function ($) {
                     $('#discountAmount').html(response.data.discount);
                     $('.msc-nav-total').html(response.data.total); // Update total cart amount
                     $('#coupon_summary').show();
-                    $('#appliedCoupon .coupon-amount').html(response.data.discount);
-                    $('#appliedCoupon').show();
                 } else {
                     alert(response.message);
                 }
@@ -425,67 +421,26 @@ jQuery(document).ready(function ($) {
     });
 
 
-    let cartAdded = false;
-    let cartCount = Number(msc_core.cart_count);
+    let cartCount = msc_core.cart_count;
     let totalQty = 0;
     //cart button update
-
-    $(document).on('click',  '.woosb-quantity-minus', function () {
-        let productId = $(this).attr("data-product-id");
-        let quantityInput = $(this).parents('.woosb-price-quantity:first').find('.woosb-quantity-input');
-        if (quantityInput.length) {
-            let currentValue = parseInt(quantityInput.val(), 10) || 0;
-            if (currentValue > 1) {
-                quantityInput.val(currentValue - 1);
-            }
-        }
-        updateAddToCartButton();
-    });
-
     $(document).on('click',  '.woosb-quantity-plus', function () {
-        let productId = $(this).attr("data-product-id");
-        let quantityInput = $(this).parents('.woosb-price-quantity:first').find('.woosb-quantity-input');
-        if (quantityInput.length) {
-            let currentValue = parseInt(quantityInput.val(), 10) || 0;
-            quantityInput.val(currentValue + 1);
-        }
         updateAddToCartButton();
-    });
-
-    $(document).on('click',  '.elementor-menu-cart__toggle', function () {
-        let totalCartQty = 0
-        $('.woosb-bundle .woosb-quantity .woosb-quantity-input').each(function() {
-            let quantity = parseInt($(this).val());
-            totalCartQty += quantity;
-        });
-        totalCartQty += cartCount;
-        $('.msc-mini-qty-wrap .msc-mini-qty').text(totalCartQty)
-    });
-
+    })
+    $(document).on('click',  '.woosb-quantity-minus', function () {
+        updateAddToCartButton();
+    })
     $(document).on('input',  '.woosb-quantity-input', function () {
         updateAddToCartButton();
     })
 
     // Update button state based on total quantity
-
     function updateAddToCartButton() {
-        totalQty = 0
-        let totalMiniQty = 0
         $('.woosb-quantity .woosb-quantity-input').each(function() {
             let quantity = parseInt($(this).val());
             totalQty += quantity;
         });
-        $('.elementor-menu-cart__product:first .woosb-quantity .woosb-quantity-input').each(function() {
-            let quantity = parseInt($(this).val());
-            totalMiniQty += quantity;
-        });
-        if( totalMiniQty < 6 ) {
-            let addMoreQty = 6 - totalMiniQty;
-            $('.msc-mini-add-more').text(addMoreQty)
-            $('.msc-mini-add-more-wrap').show()
-        }else {
-            $('.msc-mini-add-more-wrap').hide()
-        }
+        // Enable or disable the button based on total quantity
         if (totalQty >= 6 || cartCount >= 6) {
             $('#woosb-multi-add-to-cart').removeClass('disabled');
         } else {
@@ -493,42 +448,8 @@ jQuery(document).ready(function ($) {
         }
     }
 
-    $(document).on('click',  '#woosb-multi-mini-add-to-cart', function () {
-        var bundles = [];
-
-        $('.elementor-menu-cart__product:first .woosb-quantity .woosb-quantity-input').each(function() {
-            var bundleId = $(this).data('product-id');
-            var quantity = parseInt($(this).val()) || 1;
-
-            if (quantity > 0) {
-                bundles.push({ id: bundleId, qty: quantity });
-            }
-        });
-
-        if (bundles.length === 0) {
-            alert("Please select at least one bundle.");
-            return;
-        }
-        $.ajax({
-            type: 'POST',
-            url: msc_core.ajaxurl,
-            data: {
-                action: 'woosb_multi_add_to_cart',
-                bundles: bundles
-            },
-            beforeSend: function() {
-                $('#woosb-multi-mini-add-to-cart').text('添加...').prop('disabled', true);
-            },
-            success: function(response) {
-                if (response.success) {
-                    alert("Bundles added to cart!");
-                    $(document.body).trigger('wc_fragment_refresh');
-                } else {
-                    alert("Error adding bundles.");
-                }
-                $('#woosb-multi-mini-add-to-cart').text('立即下單').prop('disabled', false);
-            }
-        });
+    $(document.body).on('wc_fragments_refresh', function() {
+        cartCount = totalQty
     });
 
 });
