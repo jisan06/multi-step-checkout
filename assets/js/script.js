@@ -16,12 +16,12 @@ jQuery(document).ready(function ($) {
     }
 
     $("#backButton").click(function () {
-       if (currentStep === 2) {
-           if ($('.shipping-methods-details .shipping-fields').is(':visible')) {
-               shippingMethodShow();
-           }else {
-               cartPage()
-           }
+        if (currentStep === 2) {
+            if ($('.shipping-methods-details .shipping-fields').is(':visible')) {
+                shippingMethodShow();
+            }else {
+                cartPage()
+            }
         }
     });
 
@@ -532,8 +532,3 @@ jQuery(document).ready(function ($) {
     });
 
 });
-
-
-
-
-

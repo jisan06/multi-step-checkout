@@ -465,5 +465,3 @@ function msc_woocommerce_template( $template, $template_name, $template_path ) {
     }
     return $template;
 }
-
-
