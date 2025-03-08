@@ -233,7 +233,7 @@ function place_order() {
     $shipping_method = sanitize_text_field($_POST['shipping_method']);
     $shipping_cost = sanitize_text_field($_POST['shipping_cost']);
     $shipping_title = sanitize_text_field($_POST['shipping_title']);
-    $payment_method = sanitize_text_field($_POST['payment_method']);
+    $payment_method = 'qfpay';
     $shipping_address = sanitize_text_field($_POST['shipping_address']);
     $country = sanitize_text_field($_POST['country']); // Get country
     $country_name = WC()->countries->countries[ $country ];
@@ -246,6 +246,7 @@ function place_order() {
 
     // Create a new order
     $order = wc_create_order();
+    $order_id = $order->get_id();
 
     // Add items to the order from the cart
     foreach ($cart as $cart_item_key => $cart_item) {
@@ -329,88 +330,44 @@ function place_order() {
         'phone' => $contact_number, // Save phone number
     ], 'shipping');
 
-    // Set payment method
-//    $order->set_payment_method($payment_method);
-
     // Apply coupon code if provided
     if (!empty($coupon_code)) {
         $order->apply_coupon($coupon_code);
     }
 
+    // Set payment method
+    $available_gateways = WC()->payment_gateways->get_available_payment_gateways();
+
     $order->calculate_totals(); // Calculate totals
+
+    $payment_url = '';
+    if( isset( $available_gateways[ $payment_method ] ) ) {
+        $method = $available_gateways[ $payment_method ];
+        $order->set_payment_method($method);
+        $result = $available_gateways[ $payment_method ]->process_payment( $order_id );
+        if ( isset( $result['result'] ) && 'success' === $result['result'] ) {
+            $result = apply_filters( 'woocommerce_payment_successful_result', $result, $order_id );
+            $payment_url = $result['redirect'];
+        }
+    }else {
+        $order->set_payment_method($payment_method);
+    }
 
     // Update order status
     $order->update_status('pending'); // Or 'completed', depending on your workflow
 
-//    $payment_url = get_qfpay_payment_url($order);
-
-//    if (!$payment_url) {
-//        wp_send_json_error('Payment initiation failed.');
-//    }
-
     WC()->cart->empty_cart(true);
     // Send success response
-    wp_send_json_success(['redirect_url' => 'test']);
+    wp_send_json_success(['redirect_url' => $payment_url]);
 }
 
-function msc_order_shipping_lines( &$order, $chosen_shipping_methods, $packages ) {
-    foreach ( $packages as $package_key => $package ) {
-        if ( isset( $chosen_shipping_methods[ $package_key ], $package['rates'][ $chosen_shipping_methods[ $package_key ] ] ) ) {
-            $shipping_rate            = $package['rates'][ $chosen_shipping_methods[ $package_key ] ];
-            $item                     = new WC_Order_Item_Shipping();
-            $item->legacy_package_key = $package_key; // @deprecated 4.4.0 For legacy actions.
-            $item->set_props(
-                array(
-                    'method_title' => $shipping_rate->label,
-                    'method_id'    => $shipping_rate->method_id,
-                    'instance_id'  => $shipping_rate->instance_id,
-                    'total'        => wc_format_decimal( $shipping_rate->cost ),
-                    'taxes'        => array(
-                        'total' => $shipping_rate->taxes,
-                    ),
-                    'tax_status'   => $shipping_rate->tax_status,
-                )
-            );
-
-            foreach ( $shipping_rate->get_meta_data() as $key => $value ) {
-                $item->add_meta_data( $key, $value, true );
-            }
-
-            // Add item to order and save.
-            $order->add_item( $item );
-        }
+add_filter('woocommerce_get_return_url', function($return_url, $order) {
+    if ($order instanceof WC_Order) {
+        $order_key = $order->get_order_key(); // Get the WooCommerce order key
+        return home_url('/custom-checkout/?order_id=' . $order->get_id() . '&key=' . $order_key);
     }
-}
-
-function get_qfpay_payment_url($order) {
-    $payment_data = [
-        'merchant_id' => 'YOUR_QFPAY_MERCHANT_ID',
-        'order_id'    => $order->get_id(),
-        'amount'      => $order->get_total() * 100, // Convert to cents if required
-        'currency'    => get_woocommerce_currency(),
-        'callback_url' => site_url('/qfpay-webhook'), // Webhook to handle payment response
-        'redirect_url' => $order->get_checkout_order_received_url(), // Redirect after payment
-    ];
-
-    $response = wp_remote_post('https://openapi-hk.qfapi.com/checkstand', [
-        'method'    => 'POST',
-        'body'      => json_encode($payment_data),
-        'headers'   => [
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer YOUR_QFPAY_API_KEY'
-        ],
-    ]);
-    $response_body = json_decode(wp_remote_retrieve_body($response), true);
-    print_r('$response_body');
-    print_r($response);
-    exit();
-    if (isset($response_body['payment_url'])) {
-        wp_send_json_success(['redirect_url' => $response_body['payment_url']]);
-        return $response_body['payment_url'];
-    }
-
-    return false;
-}
+    return $return_url;
+}, 10, 2);
 
 add_action('wp_ajax_nopriv_qfpay_payment_callback', 'qfpay_payment_callback');
 function qfpay_payment_callback() {
