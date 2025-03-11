@@ -294,6 +294,7 @@ jQuery(document).ready(function ($) {
                     $('#coupon_summary').show();
                     $('#appliedCoupon .coupon-amount').html(response.data.discount);
                     $('#appliedCoupon').show();
+                    $('.apply-button').hide();
                 } else {
                     alert(response.message);
                 }
@@ -303,6 +304,9 @@ jQuery(document).ready(function ($) {
 
     // Remove Coupon
     $('#removeCoupon').on('click', function () {
+        let button = $(this)
+        let buttonDefault = $(this).text()
+        button.text('Removing...')
         $.ajax({
             url: msc_core.ajaxurl,
             type: 'POST',
@@ -314,6 +318,9 @@ jQuery(document).ready(function ($) {
                     $('#discountAmount').text('$0.00');
                     $('.msc-nav-total').html(response.data.total); // Update total cart amount
                     $('#coupon_summary').hide();
+                    $('#appliedCoupon').hide();
+                    $('.apply-button').show();
+                    button.text(buttonDefault)
                 }
             }
         });
@@ -353,12 +360,6 @@ jQuery(document).ready(function ($) {
 
         var couponCode = $('#couponCode').val(); // Get coupon code
 
-        // Validate required fields
-        if (!shippingAddress || !contactNumber || !country || !state) {
-            alert('Please fill in all required shipping details.');
-            return;
-        }
-
         // Order data object
         var orderData = {
             action: 'place_order',
@@ -366,10 +367,10 @@ jQuery(document).ready(function ($) {
             shipping_method: shippingMethod,
             shipping_title: shippingTitle,
             shipping_cost: shippingCost,
-            shipping_address: shippingAddress,
-            country: country,
-            state: state,
-            contact_number: contactNumber,
+            shipping_address: shippingAddress ?? '',
+            country: country ?? '',
+            state: state ?? '',
+            contact_number: contactNumber ?? '',
             coupon_code: couponCode,
             receipt_date: receiptDate,
             delivery_time: deliveryTime,

@@ -20,7 +20,7 @@ foreach ($shipping_zones as $zone) {
         if ($method->enabled === 'yes') {
             // Get method title and cost (if applicable)
             $method_title = $method->get_method_title();
-            $method_cost = $method->cost; // Default cost, you might want to calculate this based on cart
+            $method_cost = ! empty( $method->cost ) ? $method->cost : 0; // Default cost, you might want to calculate this based on cart
 
             // Store the method information
             $active_shipping_methods[] = [
@@ -37,7 +37,13 @@ foreach ($shipping_zones as $zone) {
 
     if (!empty($applied_coupons)) {
         foreach ($applied_coupons as $coupon_code) {
-            $discount_total += WC()->cart->get_coupon_discount_amount($coupon_code);
+            $wc_coupon = new \WC_Coupon($coupon_code);
+            $type = $wc_coupon->get_discount_type();
+            if( $type == 'percent' ) {
+                $discount_total = '%' . $wc_coupon->get_amount();
+            }else {
+                $discount_total = wc_price(WC()->cart->get_coupon_discount_amount($coupon_code));
+            }
         }
     }
 ?>

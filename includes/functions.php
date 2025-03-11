@@ -172,13 +172,19 @@ function apply_coupon_ajax() {
     }
 
     $coupon_code = sanitize_text_field($_POST['coupon_code']);
+    $wc_coupon = new \WC_Coupon($coupon_code);
+    $type = $wc_coupon->get_discount_type();
     WC()->cart->apply_coupon($coupon_code);
     WC()->cart->calculate_totals();
 
-    $discount_amount = WC()->cart->get_coupon_discount_amount($coupon_code);
+    if( $type == 'percent' ) {
+        $discount_amount = '%' . $wc_coupon->get_amount();
+    }else {
+        $discount_amount = wc_price(WC()->cart->get_coupon_discount_amount($coupon_code));
+    }
 
     wp_send_json_success([
-        'discount' => wc_price($discount_amount),
+        'discount' => $discount_amount,
         'total' => WC()->cart->get_total() // Return total price after discount
     ]);
 }
