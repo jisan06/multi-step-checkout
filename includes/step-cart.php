@@ -1,36 +1,36 @@
 <?php
-if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
-}
+    if (!defined('ABSPATH')) {
+        exit; // Exit if accessed directly
+    }
 
-global $woocommerce;
+    global $woocommerce;
 
-// Get WooCommerce cart contents
-$cart = WC()->cart->get_cart();
-$cart_count = WC()->cart->get_cart_contents_count();
-$shipping_zones = WC_Shipping_Zones::get_zones();
-$active_shipping_methods = [];
+    // Get WooCommerce cart contents
+    $cart = WC()->cart->get_cart();
+    $cart_count = WC()->cart->get_cart_contents_count();
+    $shipping_zones = WC_Shipping_Zones::get_zones();
+    $active_shipping_methods = [];
 
-foreach ($shipping_zones as $zone) {
-    // Get the shipping methods for the current zone
-    $zone_methods = $zone['shipping_methods'];
+    foreach ($shipping_zones as $zone) {
+        // Get the shipping methods for the current zone
+        $zone_methods = $zone['shipping_methods'];
 
-    foreach ($zone_methods as $method) {
-        // Check if the method is enabled
-        if ($method->enabled === 'yes') {
-            // Get method title and cost (if applicable)
-            $method_title = $method->get_method_title();
-            $method_cost = ! empty( $method->cost ) ? $method->cost : 0; // Default cost, you might want to calculate this based on cart
+        foreach ($zone_methods as $method) {
+            // Check if the method is enabled
+            if ($method->enabled === 'yes') {
+                // Get method title and cost (if applicable)
+                $method_title = $method->get_method_title();
+                $method_cost = ! empty( $method->cost ) ? $method->cost : 0; // Default cost, you might want to calculate this based on cart
 
-            // Store the method information
-            $active_shipping_methods[] = [
-                'id' => $method->id,
-                'title' => $method_title,
-                'cost' => $method_cost,
-            ];
+                // Store the method information
+                $active_shipping_methods[] = [
+                    'id' => $method->id,
+                    'title' => $method_title,
+                    'cost' => $method_cost,
+                ];
+            }
         }
     }
-}
 
     $applied_coupons = WC()->cart->get_applied_coupons();
     $discount_total = 0;
