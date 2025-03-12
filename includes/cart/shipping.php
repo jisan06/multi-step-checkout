@@ -23,8 +23,7 @@
                         data-cost="<?php echo esc_attr($method['cost']); ?>"
                         data-title="<?php echo esc_attr($method['title']); ?>"
                     >
-                    <div class="shipping-label"><?php echo esc_html($method['title']); ?></div> -
-                    <div class="shipping-cost"><?php echo wc_price($method['cost']); ?></div>
+                        <?php echo esc_html($method['title']); ?> - <?php echo wc_price($method['cost']); ?>
                     <span class="arrow">→</span> <!-- Right arrow -->
                 </div>
             </label>

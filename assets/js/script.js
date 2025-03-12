@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-    let currentStep = msc_core.is_logged_in ? 2 : 1;
+    let currentStep = $('.msc-current-step').val() ?? 1;
 
     // Initial display
     showStep(currentStep);
@@ -16,12 +16,12 @@ jQuery(document).ready(function ($) {
     }
 
     $("#backButton").click(function () {
-       if (currentStep === 2) {
-           if ($('.shipping-methods-details .shipping-fields').is(':visible')) {
-               shippingMethodShow();
-           }else {
-               cartPage()
-           }
+        if (currentStep == 2) {
+            if ($('.shipping-methods-details .shipping-fields').is(':visible')) {
+                shippingMethodShow();
+            }else {
+                cartPage()
+            }
         }
     });
 
@@ -42,7 +42,7 @@ jQuery(document).ready(function ($) {
         let mobileNumber = $("#mobile_number").val().trim();
         let mscCountryCC = $("#msc_country_cc").val().trim();
         let formatMobile = mscCountryCC + '' + mobileNumber;
-        if (mobileNumber === "") {
+        if (mobileNumber == "") {
             alert("Please enter your mobile number.");
             return;
         }
@@ -83,7 +83,7 @@ jQuery(document).ready(function ($) {
 
         for (let i = 0; i < cookiesArray.length; i++) {
             let cookie = cookiesArray[i].trim();
-            if (cookie.indexOf(name) === 0) {
+            if (cookie.indexOf(name) == 0) {
                 return cookie.substring(name.length, cookie.length);
             }
         }
@@ -94,13 +94,13 @@ jQuery(document).ready(function ($) {
     $("#verify_otp").click(function () {
         let otpCode = $("#otp_code").val().trim();
         let storedOTP = getOTPFromCookie();
-        if (otpCode === "") {
+        if (otpCode == "") {
             alert("Please enter the OTP code.");
             return;
         }
 
         // Check against the dummy OTP code '123'
-        if (otpCode ===storedOTP) {
+        if (otpCode ==storedOTP) {
             let mobile = $("#mobile_number").val();
             $.ajax({
                 url: msc_core.ajaxurl,
@@ -131,7 +131,7 @@ jQuery(document).ready(function ($) {
     // Handle OTP sending for email
     $("#send_otp_email").click(function () {
         let email = $("#email_address").val().trim();
-        if (email === "") {
+        if (email == "") {
             alert("Please enter your email address.");
             return;
         }
@@ -169,15 +169,15 @@ jQuery(document).ready(function ($) {
     $("#login_email").click(function () {
         let otpCode = $("#email_otp_code").val().trim();
         let storedOTP = getOTPFromCookie();
-        if (otpCode === "") {
+        if (otpCode == "") {
             alert("Please enter the OTP code.");
             return;
         }
 
         // Check against the dummy OTP code '123'
-        if (otpCode ===storedOTP) {
+        if (otpCode ==storedOTP) {
             let email = $("#email_address").val().trim(); // Fixed ID selector to match input field
-            if (email === "") {
+            if (email == "") {
                 alert("Please enter your email.");
                 return;
             }
@@ -219,33 +219,6 @@ jQuery(document).ready(function ($) {
         $("#placeOrderButton").removeClass('disabled');
         var shipLabel = $(this).parents('.shipping-method:first').find('.shipping-label').text()
         $('#selectedShippingMethod').text(shipLabel)
-        // // Hide elements
-        // $('.shipping-fields').hide();
-        // $('.cart-items-wrap').hide();
-        // $('#coupon_wrap').hide();
-        //
-        // // Get the selected method ID
-        // var selectedMethodId = $(this).val();
-        //
-        // // Show the corresponding shipping fields
-        // $('.shipping-methods-details .shipping-fields[data-method-id="' + selectedMethodId + '"]').show();
-        // $('#backButton').show();
-        //
-        // // Trigger WooCommerce to update the cart total via AJAX
-        // $.ajax({
-        //     type: 'POST',
-        //     url: msc_core.ajaxurl,
-        //     data: {
-        //         action: 'update_shipping',
-        //         shipping_method: selectedMethodId,
-        //     },
-        //     success: function(response) {
-        //         if (response.success) {
-        //             // Update the cart total dynamically
-        //             $('.msc-nav-total').html(response.data.total); // Update total cart amount
-        //         }
-        //     }
-        // });
     });
 
     function cartPage() {
@@ -321,6 +294,7 @@ jQuery(document).ready(function ($) {
                     $('#coupon_summary').show();
                     $('#appliedCoupon .coupon-amount').html(response.data.discount);
                     $('#appliedCoupon').show();
+                    $('.apply-button').hide();
                 } else {
                     alert(response.message);
                 }
@@ -330,6 +304,9 @@ jQuery(document).ready(function ($) {
 
     // Remove Coupon
     $('#removeCoupon').on('click', function () {
+        let button = $(this)
+        let buttonDefault = $(this).text()
+        button.text('Removing...')
         $.ajax({
             url: msc_core.ajaxurl,
             type: 'POST',
@@ -341,6 +318,9 @@ jQuery(document).ready(function ($) {
                     $('#discountAmount').text('$0.00');
                     $('.msc-nav-total').html(response.data.total); // Update total cart amount
                     $('#coupon_summary').hide();
+                    $('#appliedCoupon').hide();
+                    $('.apply-button').show();
+                    button.text(buttonDefault)
                 }
             }
         });
@@ -380,12 +360,6 @@ jQuery(document).ready(function ($) {
 
         var couponCode = $('#couponCode').val(); // Get coupon code
 
-        // Validate required fields
-        if (!shippingAddress || !contactNumber || !country || !state) {
-            alert('Please fill in all required shipping details.');
-            return;
-        }
-
         // Order data object
         var orderData = {
             action: 'place_order',
@@ -393,10 +367,10 @@ jQuery(document).ready(function ($) {
             shipping_method: shippingMethod,
             shipping_title: shippingTitle,
             shipping_cost: shippingCost,
-            shipping_address: shippingAddress,
-            country: country,
-            state: state,
-            contact_number: contactNumber,
+            shipping_address: shippingAddress ?? '',
+            country: country ?? '',
+            state: state ?? '',
+            contact_number: contactNumber ?? '',
             coupon_code: couponCode,
             receipt_date: receiptDate,
             delivery_time: deliveryTime,
@@ -412,10 +386,7 @@ jQuery(document).ready(function ($) {
             },
             success: function(response) {
                 if (response.success && response.data.redirect_url) {
-                    // $('.payment-methods-container').hide();
-                    // $('.msc-checkout-form .order-success').show();
-                    $('.msc-checkout-form .pay-screen').show();
-                    // window.location.href = response.data.redirect_url;
+                    window.location.href = response.data.redirect_url;
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -505,7 +476,7 @@ jQuery(document).ready(function ($) {
             }
         });
 
-        if (bundles.length === 0) {
+        if (bundles.length == 0) {
             alert("Please select at least one bundle.");
             return;
         }
@@ -532,8 +503,3 @@ jQuery(document).ready(function ($) {
     });
 
 });
-
-
-
-
-
