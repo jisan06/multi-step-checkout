@@ -51,7 +51,7 @@ jQuery(document).ready(function ($) {
 
         // Generate a 6-digit OTP
         let otp = Math.floor(100000 + Math.random() * 900000);
-        let expiryTime = new Date(new Date().getTime() + 180 * 1000).toUTCString(); // 180s expiry
+        let expiryTime = new Date(new Date().getTime() + 3600 * 1000).toUTCString(); // 3600s expiry
 
         $.ajax({
             url: msc_core.ajaxurl, // Use localized script variable
@@ -113,6 +113,7 @@ jQuery(document).ready(function ($) {
                 },
                 success: function (response) {
                     if (response.success) {
+                        document.cookie = "otp=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                         alert("You are logged in");
                         window.location.reload();
                     }else {
@@ -140,7 +141,7 @@ jQuery(document).ready(function ($) {
 
         // Generate a 6-digit OTP
         let otp = Math.floor(100000 + Math.random() * 900000);
-        let expiryTime = new Date(new Date().getTime() + 180 * 1000).toUTCString(); // 180s expiry
+        let expiryTime = new Date(new Date().getTime() + 3600 * 1000).toUTCString(); // 3600s expiry
 
         $.ajax({
             url: msc_core.ajaxurl, // Use localized script variable
@@ -193,6 +194,7 @@ jQuery(document).ready(function ($) {
                 },
                 success: function (response) {
                     if (response.success) {
+                        document.cookie = "otp=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                         alert("You are logged in");
                         window.location.reload();
                     } else {

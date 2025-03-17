@@ -58,6 +58,12 @@
         <?php
             if( ! empty($customer_coupons) ) {
             foreach ($customer_coupons as $coupon) {
+                $coupon_expiry = $coupon->get_date_expires();
+                if ($coupon_expiry) {
+                    $expiry_date = $coupon_expiry->date('Y-m-d'); // Format as needed
+                } else {
+                    $expiry_date = 'No expiry';
+                }
                 $coupon_code = $coupon->get_code(); // Coupon code is the post title
                 $coupon = new \WC_Coupon($coupon_code);
                 $type = $coupon->get_discount_type();

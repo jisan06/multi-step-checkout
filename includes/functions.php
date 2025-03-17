@@ -65,6 +65,7 @@ function msc_mobile_login() {
 
     $mobile = sanitize_text_field($_POST['mobile']);
     $otp = sanitize_text_field($_POST['otp']);
+    $username = 'user_' . $mobile; // Generate username from mobile number
 
     if (!isset($_COOKIE['otp']) || $_COOKIE['otp'] != $otp) {
         wp_send_json_error('Invalid OTP!', 400);
@@ -77,9 +78,12 @@ function msc_mobile_login() {
     ]);
 
     $users = $user_query->get_results();
-    $user  = !empty($users) ? $users[0] : '';
+    if (!empty($users)) {
+        $user = $users[0];
+    } else {
+        $user = get_user_by('login', $username);
+    }
     if (empty($user)) {
-        $username = 'user_' . $mobile; // Generate username from mobile number
         $random_password = wp_generate_password(); // Generate a random password
         $user_id = wp_create_user($username, $random_password, "{$mobile}@example.com");
 
