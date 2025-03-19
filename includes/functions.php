@@ -14,14 +14,14 @@ function send_otp() {
 
     // Twilio credentials
     $sid = 'AC7d242030987be8cc3748c9efbf150fc5';
-    $token = '70d38a5f7c523fc2dfbaa57f09259777';
+    $token = '80038012fc192adac57eea4b73c5694d';
     $twilio_number = '+17073531385';
 
     // Twilio API endpoint
-    $url = 'https://api.twilio.com/2010-04-01/Accounts/' . $sid . '/Messages.json';
+    $url = 'https://api.twilio.com/2010-04-01/Accounts/' . TWILIO_SID . '/Messages.json';
     // Prepare data for the POST request
     $data = [
-        'From' => $twilio_number,
+        'From' => TWILIO_PHONE_NUMBER,
         'To' => $mobile_number,
         'Body' => "Your OTP is: $otp",
     ];
@@ -32,7 +32,7 @@ function send_otp() {
     // Set cURL options
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_USERPWD, $sid . ':' . $token);
+    curl_setopt($ch, CURLOPT_USERPWD, TWILIO_SID . ':' . TWILIO_AUTH_TOKEN);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
 
     // Execute the cURL request
@@ -63,7 +63,9 @@ function msc_mobile_login() {
         wp_send_json_error('Invalid request!', 400);
     }
 
+    $countryCode = sanitize_text_field($_POST['countryCode']);
     $mobile = sanitize_text_field($_POST['mobile']);
+    $formatMobile = sanitize_text_field($_POST['formatMobile']);
     $otp = sanitize_text_field($_POST['otp']);
     $username = 'user_' . $mobile; // Generate username from mobile number
 
@@ -96,7 +98,9 @@ function msc_mobile_login() {
         wp_update_user(['ID' => $user_id, 'role' => 'customer']);
 
         // Store mobile number in user meta
-        update_user_meta($user_id, 'mobile_number', $mobile);
+        update_user_meta($user_id, 'xoo_ml_phone_code', $countryCode);
+        update_user_meta($user_id, 'xoo_ml_phone_no', $mobile);
+        update_user_meta($user_id, 'xoo_ml_phone_display', $formatMobile);
 
         $user = get_user_by('ID', $user_id);
     }
@@ -104,6 +108,11 @@ function msc_mobile_login() {
     // Log in the user
     wp_set_current_user($user->ID);
     wp_set_auth_cookie($user->ID);
+    if( ! get_user_meta($user_id, 'xoo_ml_phone_no', true) ) {
+        update_user_meta($user_id, 'xoo_ml_phone_code', $countryCode);
+        update_user_meta($user_id, 'xoo_ml_phone_no', $mobile);
+        update_user_meta($user_id, 'xoo_ml_phone_display', $formatMobile);
+    }
     wp_send_json_success(['message' => 'Login successful']);
 }
 

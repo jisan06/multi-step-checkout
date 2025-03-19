@@ -102,12 +102,16 @@ jQuery(document).ready(function ($) {
         // Check against the dummy OTP code '123'
         if (otpCode ==storedOTP) {
             let mobile = $("#mobile_number").val();
+            let mscCountryCC = $("#msc_country_cc").val().trim();
+            let formatMobile = mscCountryCC + '' + mobile;
             $.ajax({
                 url: msc_core.ajaxurl,
                 type: "POST",
                 data: {
                     action: "msc_mobile_login",
+                    countryCode: mscCountryCC,
                     mobile: mobile,
+                    formatMobile: formatMobile,
                     otp: otpCode,
                     security: msc_core.nonce
                 },
