@@ -12,11 +12,6 @@ function send_otp() {
     $mobile_number = sanitize_text_field($_POST['mobile_number']);
     $otp = sanitize_text_field($_POST['otp']);
 
-    // Twilio credentials
-    $sid = 'AC7d242030987be8cc3748c9efbf150fc5';
-    $token = '80038012fc192adac57eea4b73c5694d';
-    $twilio_number = '+17073531385';
-
     // Twilio API endpoint
     $url = 'https://api.twilio.com/2010-04-01/Accounts/' . TWILIO_SID . '/Messages.json';
     // Prepare data for the POST request

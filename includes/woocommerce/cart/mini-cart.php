@@ -15,18 +15,18 @@ if ( ! function_exists( 'msc_render_mini_cart_item' ) ) {
         $product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
         ?>
         <div class="elementor-menu-cart__product woocommerce-cart-form__cart-item <?php echo esc_attr(apply_filters('woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key)); ?>">
+            <div class="msc-cart-top">
+                <div class="elementor-menu-cart__product-image msc-image product-thumbnail">
+                    <?php
+                    $thumbnail = apply_filters( 'woocommerce_cart_item_thumbnail', $_product->get_image(), $cart_item, $cart_item_key );
 
-            <div class="elementor-menu-cart__product-image msc-image product-thumbnail">
-                <?php
-                $thumbnail = apply_filters( 'woocommerce_cart_item_thumbnail', $_product->get_image(), $cart_item, $cart_item_key );
-
-                if ( ! $product_permalink ) :
-                    echo wp_kses_post( $thumbnail );
-                else :
-                    printf( '<a href="%s">%s</a>', esc_url( $product_permalink ), wp_kses_post( $thumbnail ) );
-                endif;
-                ?>
-            </div>
+                    if ( ! $product_permalink ) :
+                        echo wp_kses_post( $thumbnail );
+                    else :
+                        printf( '<a href="%s">%s</a>', esc_url( $product_permalink ), wp_kses_post( $thumbnail ) );
+                    endif;
+                    ?>
+                </div>			</div>
 
             <div class="elementor-menu-cart__product-name product-name" data-title="<?php echo esc_attr__( 'Product', 'elementor-pro' ); ?>">
                 <?php
@@ -58,12 +58,12 @@ if ( ! function_exists( 'msc_render_mini_cart_item' ) ) {
                 <div class="woosb-quantity">
                     <button class="woosb-quantity-minus" data-product-id="<?php echo esc_attr($product_id);?>">−</button>
                     <input
-                        type="number"
-                        class="woosb-quantity-input" id="quantity_<?php echo esc_attr($product_id);?>"
-                        name="quantity"
-                        value="<?php echo $cart_item['quantity'] ?>"
-                        min="0"
-                        data-product-id="<?php echo $product_id?>"
+                            type="number"
+                            class="woosb-quantity-input" id="quantity_<?php echo esc_attr($product_id);?>"
+                            name="quantity"
+                            value="<?php echo $cart_item['quantity'] ?>"
+                            min="0"
+                            data-product-id="<?php echo $product_id?>"
                     >
                     <button class="woosb-quantity-plus" data-product-id="<?php echo esc_attr($product_id);?>">+</button>
                 </div>
@@ -82,11 +82,11 @@ if ( empty( $cart_items ) ) { ?>
 <?php } else {
     $cart_count = WC()->cart->get_cart_contents_count();
     $btn_class =  $cart_count  > 5 ? '' : 'disabled';
-?>
+    ?>
     <div class="elementor-menu-cart__products woocommerce-mini-cart cart woocommerce-cart-form__contents">
         <div>
             <div class="msc-mini-add-more-wrap" style="display:none;">
-                Add <span class="msc-mini-add-more"></span> more meals to your order!
+                再加購 <span class="msc-mini-add-more"></span> 餐 即可下單！
             </div>
             <div>
                 <button id="woosb-multi-mini-add-to-cart" class="button add-to-cart-button <?php echo $btn_class; ?>">立即下單</button>

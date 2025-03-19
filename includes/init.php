@@ -26,15 +26,15 @@ function msc_checkout_shortcode() {
 
         <div class="msc-content">
             <div id="step-1" class="step-content <?php echo $current_step == 1 ? 'active' : 'hidden'; ?>">
-			<div class="step-img"><img src="/wp-content/uploads/2025/02/Group-59468-1.png"></div>
+                <div class="step-img"><img src="/wp-content/uploads/2025/02/Group-59468-1.png"></div>
                 <?php include MSC_PLUGIN_PATH . 'includes/step-login.php'; ?>
             </div>
             <div id="step-2" class="step-content <?php echo $current_step == 2 ? 'active' : 'hidden'; ?>">
-			<div class="step-img"><img src="/wp-content/uploads/2025/02/Group-59468-2.png"></div>
+                <div class="step-img"><img src="/wp-content/uploads/2025/02/Group-59468-2.png"></div>
                 <?php include MSC_PLUGIN_PATH . 'includes/step-cart.php'; ?>
             </div>
             <div id="step-3" class="step-content <?php echo $current_step == 3 ? 'active' : 'hidden'; ?>">
-			<div class="step-img"><img src="/wp-content/uploads/2025/02/Group-59468-3.png"></div>
+                <div class="step-img"><img src="/wp-content/uploads/2025/02/Group-59468-3.png"></div>
                 <?php include MSC_PLUGIN_PATH . 'includes/step-checkout.php'; ?>
             </div>
         </div>

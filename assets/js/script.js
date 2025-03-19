@@ -494,7 +494,7 @@ jQuery(document).ready(function ($) {
                 bundles: bundles
             },
             beforeSend: function() {
-                $('#woosb-multi-mini-add-to-cart').text('添加...').prop('disabled', true);
+                $('#woosb-multi-mini-add-to-cart').text('??...').prop('disabled', true);
             },
             success: function(response) {
                 if (response.success) {
@@ -503,7 +503,7 @@ jQuery(document).ready(function ($) {
                 } else {
                     alert("Error adding bundles.");
                 }
-                $('#woosb-multi-mini-add-to-cart').text('立即下單').prop('disabled', false);
+                $('#woosb-multi-mini-add-to-cart').text('????').prop('disabled', false);
             }
         });
     });

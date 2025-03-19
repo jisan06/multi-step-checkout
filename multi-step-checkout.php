@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Multi Step Checkout
- * Description: A WooCommerce multi-step checkout with mobile OTP or email login.
+ * Description: A WooCommerce multi-step checkout with mobile OTP or email OTP.
  * Version: 1.0
  * Author: Jisan
  */
