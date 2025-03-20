@@ -1,4 +1,25 @@
+let locationRegions = {}
+let selectedRegion  = {}
+let selectedDistrict  = {}
+let selectedAddress  = {}
+loadLocationJSON('english')
+async function loadLocationJSON(lang) {
+    try {
+        const response = await fetch('/wp-content/plugins/multi-step-checkout/lib/locations.json');
+
+        // Parse the JSON content
+        let jsonParse = await response.json();
+        locationRegions = jsonParse[lang]?.regions;
+    } catch (error) {
+        console.error('Error loading JSON:', error);
+    }
+}
 jQuery(document).ready(function ($) {
+    $('.select2').select2({
+        width: '100%',
+        placeholder: "Select an option",
+        allowClear: false
+    });
     let currentStep = $('.msc-current-step').val() ?? 1;
 
     // Initial display
@@ -26,6 +47,37 @@ jQuery(document).ready(function ($) {
     });
 
     $('.confirm-data').click(function () {
+        let ShippingField = $(this).parents('.shipping-methods-details:first').find('.shipping-fields:visible')
+        let ShippingMethod = ShippingField.attr('data-method-id')
+        if( ShippingMethod === 'local_pickup' ) {
+            let region = ShippingField.find('#shipping_region').val();
+            let district = ShippingField.find('#shipping_district').val();
+            let shippingAddress = ShippingField.find('#shipping_address').val();
+            if( region === ''){
+                alert('選擇地區')
+                return false;
+            }else if( district === ''){
+                alert('選擇地區')
+                return false;
+            }else if( shippingAddress === ''){
+                alert('選擇地址')
+                return false;
+            }
+        }else {
+            let shippingAddress = ShippingField.find('.shipping-address').val();
+            let shippingNumber = ShippingField.find('.shipping-number').val();
+            let shippingPerson = ShippingField.find('.shipping-person').val();
+            if( shippingAddress === ''){
+                alert('需要送貨地址')
+                return false;
+            }else if( shippingNumber === ''){
+                alert('需要聯絡電話')
+                return false;
+            }else if( shippingPerson === ''){
+                alert('需要聯絡人')
+                return false;
+            }
+        }
         cartPage()
     });
 
@@ -213,6 +265,7 @@ jQuery(document).ready(function ($) {
     });
 
 
+    //Shipping code
     $('#toggleShipping').on('click', function() {
         shippingMethodShow();
     });
@@ -270,6 +323,48 @@ jQuery(document).ready(function ($) {
             }
         });
     }
+
+    $('.shipping_region').on('change', function () {
+        let regionVal = $(this).val();
+        const districtDropdown = $('#shipping_district');
+        districtDropdown.empty();
+
+        // Add a default option
+        districtDropdown.append('<option value="">Select District</option>');
+
+        selectedRegion = locationRegions.find(region => region.name === regionVal);
+
+        if (selectedRegion && selectedRegion.districts) {
+            // Populate districts based on the selected region
+            selectedRegion.districts.forEach(district => {
+                const option = $('<option></option>');  // jQuery way to create an option element
+                option.val(district.name);
+                option.text(district.name);
+                districtDropdown.append(option);  // Append option to the district dropdown
+            });
+        }
+    })
+
+    $('.shipping_district').on('change', function () {
+        let districtVal = $(this).val();
+        selectedDistrict = selectedRegion ? selectedRegion.districts.find(district => district.name === districtVal) : null;
+
+        const addressDropdown = $('#shipping_address_wrap .shipping_address');
+        addressDropdown.empty().append('<option value="">Select Address</option>');
+
+        if (selectedDistrict) {
+            selectedDistrict.stores.forEach(store => {
+                let storeDetails = `${store.code} - ${store.address} (Mon-Fri: ${store.business_hours.mon_to_fri}, Sat-Sun: ${store.business_hours.sat_sun_public_holidays})`;
+                addressDropdown.append(`<option value="${store.code}">${storeDetails}</option>`);
+            });
+        }
+    })
+
+    $('#shipping_address_wrap #shipping_address').on('change', function () {
+        selectedAddress = $("#shipping_address_wrap #shipping_address option:selected").text();
+    })
+
+    //Shipping code end
 
 
     //Coupon section
@@ -336,13 +431,6 @@ jQuery(document).ready(function ($) {
     $('#placeOrderButton').on('click', function(e) {
         e.preventDefault(); // Prevent default form submission
 
-        // Collect the selected payment method
-        // var selectedPaymentMethod = $('input[name="payment_method"]:checked').val();
-        // if (!selectedPaymentMethod) {
-        //     alert('Please select a payment method.');
-        //     return;
-        // }
-
         // Collect selected shipping method
         var shipping = $('input[name="shipping_method"]:checked');
         var shippingCost = shipping.data('cost');
@@ -357,29 +445,37 @@ jQuery(document).ready(function ($) {
         var shippingContainer = $('.shipping-fields[data-method-id="' + shippingMethod + '"]');
 
         // Retrieve relevant values based on selected shipping method
-        var shippingAddress = shippingContainer.find('.shipping-address').val();
+        var shippingAddress = shippingContainer.find('#shipping_address').val();
         var contactNumber = shippingContainer.find('.shipping-number').val();
-        var country = shippingContainer.find('#calc_shipping_country').val();
-        var state = shippingContainer.find('#calc_shipping_state').val();
-        var receiptDate = shippingContainer.find('.shipping-receipt-date').val();
-        var deliveryTime = shippingContainer.find('.shipping-time').val();
+        var contactPerson = shippingContainer.find('.shipping-person').val();
+        var deliveryNote = shippingContainer.find('.delivery-note').val();
 
+        var country = shippingContainer.find('#shipping_country').val();
+        var region = shippingContainer.find('#shipping_region').val();
+        var district = shippingContainer.find('#shipping_district').val();
+
+        if( shippingMethod === 'local_pickup' ) {
+            shippingAddress = selectedAddress;
+        }
         var couponCode = $('#couponCode').val(); // Get coupon code
 
         // Order data object
         var orderData = {
             action: 'place_order',
-            // payment_method: selectedPaymentMethod,
             shipping_method: shippingMethod,
             shipping_title: shippingTitle,
             shipping_cost: shippingCost,
+
             shipping_address: shippingAddress ?? '',
-            country: country ?? '',
-            state: state ?? '',
             contact_number: contactNumber ?? '',
+            contact_person: contactPerson ?? '',
+            delivery_note: deliveryNote ?? '',
+
+            country: country ?? '',
+            region: region ?? '',
+            district: district,
+
             coupon_code: couponCode,
-            receipt_date: receiptDate,
-            delivery_time: deliveryTime,
         };
 
         // Send AJAX request to place order

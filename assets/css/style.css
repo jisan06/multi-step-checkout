@@ -299,3 +299,8 @@
 .elementor-menu-cart__product .woosb-price-quantity {
     gap: 50px;
 }
+#shipping_address_wrap .shipping_address option  {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

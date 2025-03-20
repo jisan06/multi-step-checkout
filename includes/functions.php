@@ -238,7 +238,7 @@ add_action('wp_ajax_place_order', 'place_order');
 add_action('wp_ajax_nopriv_place_order', 'place_order');
 function place_order() {
     if (!isset($_POST['shipping_method'], $_POST['shipping_address'])) {
-        wp_send_json_error(['message' => 'Incomplete order data.']);
+        wp_send_json_error(['message' => 'Incomplete Shipping Information.']);
         return;
     }
 
@@ -248,15 +248,19 @@ function place_order() {
     $shipping_cost = sanitize_text_field($_POST['shipping_cost']);
     $shipping_title = sanitize_text_field($_POST['shipping_title']);
     $payment_method = 'qfpay';
+    $contact_number = sanitize_text_field($_POST['contact_number']);
+    $contact_person = sanitize_text_field($_POST['contact_person']);
+    $delivery_note = sanitize_text_field($_POST['delivery_note']);
+
     $shipping_address = sanitize_text_field($_POST['shipping_address']);
+
     $country = sanitize_text_field($_POST['country']); // Get country
     $country_name = WC()->countries->countries[ $country ];
-    $state = sanitize_text_field($_POST['state']); // Get state
-    $state_name = WC()->countries->get_states( $country )[$state];
-    $contact_number = sanitize_text_field($_POST['contact_number']);
+    $region = sanitize_text_field($_POST['region']);
+    $district = sanitize_text_field($_POST['district']);
+
+
     $coupon_code = sanitize_text_field($_POST['coupon_code']); // Get coupon code
-    $receipt_date = sanitize_text_field($_POST['receipt_date']); // Get receipt date
-    $delivery_time = sanitize_text_field($_POST['delivery_time']);
 
     // Create a new order
     $order = wc_create_order();
@@ -300,48 +304,46 @@ function place_order() {
     $shipping_item->set_method_title($shipping_title . ( $country_name ? '(' . $country_name .')' : '' ));
     $shipping_item->set_total($shipping_cost);
 
-    $shipping_item->add_meta_data(
-        $shipping_method === 'local_pickup' ? 'Pickup Location' : 'Delivery Location',
-        $country_name
-    );
-    $shipping_item->add_meta_data(
-        $shipping_method === 'local_pickup' ? 'Pickup Address' : 'Delivery Address',
-        $shipping_address .
-        ($state_name ? ', ' . $state_name : '') .
-        ($country_name ? ', ' . $country_name : '')
-    );
-    $shipping_item->add_meta_data('Contact Number', $contact_number);
-    if($shipping_method !== 'local_pickup') {
+    if( $shipping_method === 'local_pickup' ) {
+        $shipping_item->add_meta_data('Region', $region);
+        $shipping_item->add_meta_data('District', $district);
         $shipping_item->add_meta_data(
-            'Date of Receipt',
-            $receipt_date
+            'Delivery Address',
+            $shipping_address
         );
+    }else {
         $shipping_item->add_meta_data(
-            'Delivery Time',
-            $delivery_time
+            'Delivery Address',
+            $shipping_address
         );
+        $shipping_item->add_meta_data('Contact Number', $contact_number);
+        $shipping_item->add_meta_data('Contact Person', $contact_person);
+        $shipping_item->add_meta_data('Delivery Notes', $delivery_note);
     }
+
     $order->add_item($shipping_item);
 
     // Set billing and shipping addresses
     $order->set_address([
         'address_1' => $shipping_address,
-        'city' => '', // Add city if you have it
-        'state' => $state,
-        'postcode' => '', // Add postcode if you have it
-        'country' => $country,
-        'email' => '', // Add email if you have it
-        'phone' => $contact_number, // Save phone number
+//        'city' => '', // Add city if you have it
+//        'state' => $state,
+//        'postcode' => '', // Add postcode if you have it
+//        'country' => $country,
+//        'email' => '', // Add email if you have it
+//        'phone' => $contact_number, // Save phone number
     ], 'billing');
 
     $order->set_address([
         'address_1' => $shipping_address,
-        'city' => '', // Add city if you have it
-        'state' => $state,
-        'postcode' => '', // Add postcode if you have it
-        'country' => $country,
-        'email' => '', // Add email if you have it
-        'phone' => $contact_number, // Save phone number
+//        'city' => '', // Add city if you have it
+//        'state' => $state,
+//        'postcode' => '', // Add postcode if you have it
+//        'country' => $country,
+//        'email' => '', // Add email if you have it
+//        'phone' => $contact_number, // Save phone number
+//        'contact_person' => $contact_person, // Save phone number
+//        'delivery_note' => $delivery_note, // Save phone number
     ], 'shipping');
 
     // Apply coupon code if provided

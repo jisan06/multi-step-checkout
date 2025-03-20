@@ -22,7 +22,8 @@ require_once MSC_PLUGIN_PATH . 'includes/init.php';
 function msc_enqueue_scripts() {
     wp_enqueue_style('msc-style', MSC_PLUGIN_URL . 'assets/css/style.css');
 
-    wp_enqueue_script( 'wc-country-select' );
+    wp_enqueue_style( 'select2' );
+    wp_enqueue_script( 'select2' );
     wp_enqueue_script('msc-script', MSC_PLUGIN_URL . 'assets/js/script.js', array('jquery'), MSC_VER, true);
     wp_localize_script('msc-script', 'msc_core', array(
         'ajaxurl' => admin_url('admin-ajax.php'),

@@ -19,7 +19,7 @@ foreach ($shipping_zones as $zone) {
         // Check if the method is enabled
         if ($method->enabled === 'yes') {
             // Get method title and cost (if applicable)
-            $method_title = $method->get_method_title();
+            $method_title = $method->get_title();
             $method_cost = ! empty( $method->cost ) ? $method->cost : 0; // Default cost, you might want to calculate this based on cart
 
             // Store the method information
@@ -121,7 +121,7 @@ if (!empty($applied_coupons)) {
                 <span class="cart-icon"><img src="/wp-content/uploads/2025/02/shopping_basket.svg"></span> <span class="cart-count"><?php echo $cart_count; ?></span>
             </div>
             <div class="msc-nav-total">
-                <?php echo WC()->cart->get_total(); ?>
+                <?php echo WC()->cart->get_subtotal(); ?>
             </div>
         </div>
         <button id="placeOrderButton" class="disabled">立即結帳</button>

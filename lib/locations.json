@@ -1,0 +1,1272 @@
+{
+  "english": {
+    "regions": [
+      {
+        "name": "Hong Kong Island",
+        "districts": [
+          {
+            "name": "Aberdeen",
+            "stores": [
+              {
+                "code": "852TAL",
+                "address": "Workshop No. 6, 9/F, Fullagar Industrial Building, 234 Aberdeen Main Road, Aberdeen, Southern District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              },
+
+              {
+                "code": "852TBL",
+                "address": "Shop 119, Wah On House, Wah Fu (I) Estate, 18 Wah Fu Road, Aberdeen, Southern District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:30",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Ap Lei Chau",
+            "stores": [
+              {
+                "code": "852TCL",
+                "address": "Shop A on G/F, Fortune Mansion, Nos. 57-63 Main Street Ap Lei Chau, Nos. 14-24 Hung Shing Street, Ap Lei Chau, Southern District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "Delivery"
+              },
+
+              {
+                "code": "852Z601",
+                "address": "209D, 2/F, Marina Square West Centre, 12A South Horizon Drive, Ap Lei Chau, Southern District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+
+          {
+            "name": "Siu Sai Wan",
+            "stores": [
+              {
+                "code": "852Z552",
+                "address": "Shop No. 173 & 128, 1/F, Fullview Garden Commercial Centre, 18 Siu Sai Wan Road, Siu Sai Wan, Eastern District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Shau Kei Wan",
+            "stores": [
+              {
+                "code": "852PAL",
+                "address": "Shop 1142 & 1143, 1/F, Smiling Shaukeiwan Plaza, 17 Nam Hong Street, Shau Kei Wan, Eastern District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "North Point",
+            "stores": [
+              {
+                "code": "852PDL",
+                "address": "Shop 202 & 203, 2/F, Olympia Plaza, 255 King's Road, North Point, Eastern District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+
+              {
+                "code": "852NPTM",
+                "address": "Shop 8, G/F, Fung Full Plaza, 480 King's Road, North Point, Eastern District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "10:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Chai Wan",
+            "stores": [
+              {
+                "code": "852PCL",
+                "address": "Workshop 1, 5/F, Trend Centre, 29 Cheung Lee Street, Chai Wan, Eastern District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00 (Closed on Sun & Public Holidays)"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Sai Wan Ho",
+            "stores": [
+              {
+                "code": "852PGL",
+                "address": "Portion A of Shop E, G/F, 28-36 Hing Man Street, Sai Wan Ho, Eastern District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "10:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Sai Wan",
+            "stores": [
+              {
+                "code": "852MAL",
+                "address": "Shop C, G/F, Shun Cheong Building, 28 Hau Wo Street, Kennedy Town, Sai Wan, Central and Western District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+
+              {
+                "code": "852Z501",
+                "address": "Shop No.1, G/F, Sunglow Building, Nos. 1L-1Q Belcher's Street, Sai Wan, Central and Eastern District, Hong Kong Island, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:30",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "name": "Kowloon",
+        "districts": [
+          {
+            "name": "Mong Kok",
+            "stores": [
+              {
+                "code": "852BAL",
+                "address": "Shop 38, G/F, Charming Garden Phase 2, Hoi Wang Road, Mong Kok, Yau Tsim Mong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+
+              {
+                "code": "852GLPM",
+                "address": "Room 1626, 16/F., Gala Place (Park-In), 56 Dundas Street, Mong Kok, Yau Tsim Mong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+
+          {
+            "name": "Prince Edward",
+            "stores": [
+              {
+                "code": "852BDL",
+                "address": "Shop A, G/F, No. 24, 24A & 26 Tai Nan Street, Prince Edward, Yau Tsim Mong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "10:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+
+          {
+            "name": "Tai Kok Tsui",
+            "stores": [
+              {
+                "code": "852BFL",
+                "address": "Shop 12, G/F, Chung Hing Building, 41 Chung Wui Street, Tai Kok Tsui, Yau Tsim Mong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+
+          {
+            "name": "Tsim Sha Tsui",
+            "stores": [
+              {
+                "code": "852KIIM",
+                "address": "The parking area for the Cross-border Coach, B1/F, K11 MUSEA, 18 Salisbury Road, Tsim Sha Tsui, Yau Tsim Mong District, Kowloon, Hong Kong (Provide shipping service only)",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-21:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+
+              {
+                "code": "852Z251",
+                "address": "Gateway Arcade Level 4 (Inside the customer service center), Harbour City, 3-27 Canton Road, Tsim Sha Tsui, Yau Tsim Mong District, Kowloon, Hong Kong (Provide shipping service only)",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-21:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "Delivery"
+              },
+
+              {
+                "code": "852Z252",
+                "address": "Shop WEK G-5, G/F, Hong Kong West Kowloon Station, Tsim Sha Tsui, Yau Tsim Mong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:00",
+                  "sat_sun_public_holidays": "11:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+
+          {
+            "name": "Kowloon City",
+            "stores": [
+              {
+                "code": "852Z253",
+                "address": "G/F, Pearl House, Nos.368-374 Prince Edward Road West, Kowloon City, Kowloon City District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+
+          {
+            "name": "Kowloon Tong",
+            "stores": [
+              {
+                "code": "852Z051",
+                "address": "Shop G36C, (Near Taxi Station) Level G, Festival Walk, 80 Tat Chee Avenue, Kowloon Tong, Kowloon City District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Hung Hom",
+            "stores": [
+              {
+                "code": "852KEL",
+                "address": "Shop Nos. 9A and 9B in the 1st Basement, Site 12, Whampoa Garden, Hunghom, Kowloon City District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Ho Man Tin",
+            "stores": [
+              {
+                "code": "852KBL",
+                "address": "Shop No.5, G/F, Hong Man House (Block C), Upper Oi Man Estate, No.60 Chung Hau Street, Ho Man Tin, Kowloon City District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:30",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "To Kwa Wan",
+            "stores": [
+              {
+                "code": "852KDL",
+                "address": "Shop B, G/F, Kingsgate, 178 Pau Chung Street, To Kwa Wan, Kowloon City District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              },
+
+              {
+                "code": "852KFL",
+                "address": "Shop 126, G/F, Block G, Lok Man Sun Chuen, To Kwa Wan, Kowloon City District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Wong Tai Sin",
+            "stores": [
+              {
+                "code": "852HAL",
+                "address": "Shop 29A, G/F, Tropicana Gardens, 110 Lung Cheung Road, Wong Tai Sin, Wong Tai Sin District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+
+              {
+                "code": "852HCL",
+                "address": "Shop S215A, 2/F, Chuk Yuen Plaza, Chuk Yuen South Estate, 15 Chuk Yuen Road, Wong Tai Sin, Wong Tai Sin District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:30",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Tsz Wan Shan",
+            "stores": [
+              {
+                "code": "852HDL",
+                "address": "Shop 2, LG/F, Wah Lai House, 153-155, Po Kong Village Road, Tsz Wan Shan, Wong Tai Sin District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+
+          {
+            "name": "Lam Tin",
+            "stores": [
+              {
+                "code": "852ACL",
+                "address": "Shop 4A20-22, 3/F , Sceneway Plaza, 8 Sceneway Road, Lam Tin, Kwun Tong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Sau Mau Ping",
+            "stores": [
+              {
+                "code": "852CNL",
+                "address": "Shop 21, Level LG/1, On Tat shopping Center, On Tat Estate, Kwun Tong, Kwun Tong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Shek Kip Mei",
+            "stores": [
+              {
+                "code": "852WCLM",
+                "address": "Shop 222, G/F, Kam Yuck Building, 2 Wai Chi Lane, Shek Kip Mei, Sham Shui Po District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Yau Tong",
+            "stores": [
+              {
+                "code": "852AJL",
+                "address": "Shop 229, 2/F, Domain, Yau Tong, Kwun Tong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "10:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+
+          {
+            "name": "Wong Tai Sin",
+            "stores": [
+              {
+                "code": "852HAL",
+                "address": "Shop 29A, G/F, Tropicana Gardens, 110 Lung Cheung Road, Wong Tai Sin, Wong Tai Sin District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+
+              {
+                "code": "852HCL",
+                "address": "Shop S215A, 2/F, Chuk Yuen Plaza, Chuk Yuen South Estate, 15 Chuk Yuen Road, Wong Tai Sin, Wong Tai Sin District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:30",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Tsz Wan Shan",
+            "stores": [
+              {
+                "code": "852HDL",
+                "address": "Shop 2, LG/F, Wah Lai House, 153-155, Po Kong Village Road, Tsz Wan Shan, Wong Tai Sin District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable ",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+
+          {
+            "name": "Lam Tin",
+            "stores": [
+              {
+                "code": "852ACL",
+                "address": "Shop 4A20-22, 3/F , Sceneway Plaza, 8 Sceneway Road, Lam Tin, Kwun Tong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable ",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Sau Mau Ping",
+            "stores": [
+              {
+                "code": "852CNL",
+                "address": "Shop 21, Level LG/1, On Tat shopping Center, On Tat Estate, Kwun Tong, Kwun Tong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable ",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Shek Kip Mei",
+            "stores": [
+              {
+                "code": "852WCLM",
+                "address": "Shop 222, G/F, Kam Yuck Building, 2 Wai Chi Lane, Shek Kip Mei, Sham Shui Po District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/ ",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Yau Tong",
+            "stores": [
+              {
+                "code": "852AJL",
+                "address": "Shop 229, 2/F, Domain, Yau Tong, Kwun Tong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "10:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable ",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+
+          {
+            "name": "Kwun Tong",
+            "stores": [
+              {
+                "code": "852YMCM",
+                "address": "Shop No. 53 on Ground Floor., Yue Man Centre, Nos. 300 & 302 Ngau Tau Kok Road, Ngau Tau Kok, Kwun Tong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/ ",
+                "airport_baggage_service": "/"
+              },
+
+              {
+                "code": "852Z151",
+                "address": "Unit 708, 7/F, Prosperity Place, No. 6 Shing Yip Street, Kwun Tong, Kwun Tong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:00",
+                  "sat_sun_public_holidays": "12:00-20:00 (Sat) Closed (Sun & Public Holidays)"
+                },
+                "cold_chain_service": "Applicable ",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Kowloon Bay",
+            "stores": [
+              {
+                "code": "852HBL",
+                "address": "Shop 209, 1/F, Tak Bo Mall, 3 Ngau Tau Kok Road, Kowloon Bay, Kwun Tong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/ ",
+                "airport_baggage_service": "/"
+              },
+
+              {
+                "code": "852HFL",
+                "address": "Unit 129, 1/F, Richland Gardens, 80 Wang Kwong Road, Kowloon Bay, Kwun Tong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/ ",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+
+          {
+            "name": "Ngau Tau Kok",
+            "stores": [
+              {
+                "code": "852HGL",
+                "address": "Shop 131A, 1/F, On Kay Commercial Center, 20 Chun Wah Road, Ngau Tau Kok, Kwun Tong District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:30",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable ",
+                "airport_baggage_service": "Delivery"
+              }
+
+            ]
+          },
+
+          {
+            "name": "Lai Chi Kok",
+            "stores": [
+              {
+                "code": "852DCL",
+                "address": "Shop 2A, G/F, Banyan Mall, Banyan Garden, 863 Lai Chi Kok Road, Lai Chi Kok, Sham Shui Po District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable ",
+                "airport_baggage_service": "Delivery"
+              }
+
+            ]
+          },
+
+          {
+            "name": "Sham Shui Po",
+            "stores": [
+              {
+                "code": "852DDL",
+                "address": "No.143 Castle Peak Road, Sham Shui Po, Sham Shui Po District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "10:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable ",
+                "airport_baggage_service": "Delivery"
+              },
+
+              {
+                "code": "852Z201",
+                "address": "Shop No. NAC 22-23 (Unpaid Area), MTR Station, Nam Cheong Station, Sham Shui Po District, Kowloon, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/ ",
+                "airport_baggage_service": "/"
+              }
+
+            ]
+          }
+
+        ]
+      },
+
+      {
+        "name": "New Territories",
+        "districts": [
+          {
+            "name": "Tseung Kwan O",
+            "stores": [
+              {
+                "code": "852AAL",
+                "address": "Shop No. 6, G/F, Block 1, Verbena Heights, 8 Mau Tai Road, Tseung Kwan O, Sai Kung District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              },
+              {
+                "code": "852ABL",
+                "address": "Shop Nos. S21 & S21A on The First Floor of Commercial Centre, Bauhinia Garden, 11 Tong Chun Street, Tseung Kwan O, Sai Kung District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "10:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              },
+              {
+                "code": "852CLL",
+                "address": "Shop 215, 2/F, Sheung Tak Plaza, Sheung Tak Estate, 2 Tong Ming Street, Tseung Kwan O, Sai Kung District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852HHUM",
+                "address": "Shop B28-B31, 1/F Nan Fung Plaza, 8 Pui Shing Road, Tseung Kwan O, Sai Kung District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+          {
+            "name": "Lohas Park",
+            "stores": [
+              {
+                "code": "852Z101",
+                "address": "Shop 340, Level 3, The Lohas, No.1 Lohas Park Road, Tseung Kwan O, N.T. Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "10:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "Check-in, Delivery"
+              }
+            ]
+          },
+          {
+            "name": "Sai Kung",
+            "stores": [
+              {
+                "code": "852SKL",
+                "address": "Shop 10, G/F, 66 Yi Chun Street, Sai Kung, Sai Kung District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+          {
+            "name": "Ma Wan",
+            "stores": [
+              {
+                "code": "852Z353",
+                "address": "Ground Floor, No.65 Tin Liu New Village, Ma Wan, Lantau Island District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:30",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+          {
+            "name": "Ma On Shan",
+            "stores": [
+              {
+                "code": "852FDL",
+                "address": "Shop No. G-3/68B, G/F, MOSTown Street, Ma On Shan, Sha Tin District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "10:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "Delivery"
+              },
+              {
+                "code": "852FUL",
+                "address": "Shop No. 9, G/F, We Go Mall, 16 Po Tai Street, Ma On Shan, Sha Tin District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:30",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+          {
+            "name": "Tai Wai",
+            "stores": [
+              {
+                "code": "852FEL",
+                "address": "Shop Nos. 16A & 17 on Ground Floor, Holford Gardens, Nos. 2-8 Chik Wan Street, Tai Wai, Sha Tin District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852FVL",
+                "address": "Shop 3A, Commercial Complex, Carado Garden, Fu Tin Lane, Tai Wai, Sha Tin District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852NBL",
+                "address": "Shop No. 203, First Floor, Commercial / Car Park Complex (also known as Wing A of Hin Keng Shopping Centre), Hin Keng Estate, No. 69 Che Kung Mui Road, Tai Wai, Sha Tin District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+          {
+            "name": "Sha Tin",
+            "stores": [
+              {
+                "code": "852FSL",
+                "address": "Shop G41, G/F, Fortune City One Plus, Pak Tak Street, Sha Tin, Sha Tin District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852NAL",
+                "address": "Shop No. 51, G/F, Ming Shun Lau, No.3 Jat Min Chuen Street, Shatin, Sha Tin District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852NJL",
+                "address": "Shop ST5, G/F, Wah Fung House, Lek Yuen Estate, 6 Lek Yuen Street, Shatin, Sha Tin District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+          {
+            "name": "Tai Po",
+            "stores": [
+              {
+                "code": "852FCL",
+                "address": "Shop A5, G/F, Fortune Plaza, 4 On Chee Road, Tai Po, Tai Po District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852NLL",
+                "address": "Shop F122B on 1/F., Fu Shin Shopping Centre, Tai Po, Tai Po District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:30",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+          {
+            "name": "Tuen Mun",
+            "stores": [
+              {
+                "code": "852Z661",
+                "address": "Shop No. 32, Level 2, North Wing, Trend Plaza, Tuen Mun District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Check-in, Delivery"
+              },
+              {
+                "code": "852FFL",
+                "address": "Shop A13 on G/F, Goodrich Garden, No.9 Leung Tak Street, Tuen Mun, Tuen Mun District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852FNL",
+                "address": "Shop No. 102B, First Floor, Fu Tai Shopping Centre, Fu Tai Estate, Tuen Mun, Tuen Mun District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              },
+              {
+                "code": "852UAL",
+                "address": "Shop 65, G/F, Melody Garden, Tuen Mun Ferry Pier, Tuen Mun, Tuen Mun District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852TCSM",
+                "address": "Shop No. 9, G/F, Yan Oi Building, No. 11 Tseng Choi Street, Tuen Mun, Tuen Mun District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              },
+              {
+                "code": "852Z660",
+                "address": "Shop No. N-313, 3/F, Zone N, H.A.N.D.S, On Ting Estate, Tuen Mun, Tuen Mun District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+          {
+            "name": "Yuen Long",
+            "stores": [
+              {
+                "code": "852Z701",
+                "address": "Shop A on G/F, On King Building, Nos. 81-97 Hop Yick Road, Yuen Long, Yuen Long District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              },
+              {
+                "code": "852FLL",
+                "address": "Shop F and Cockloft on Ground Floor, Tung Fat Building, No.9 Ping Wui Street, Yuen Long, Yuen Long District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852Z662",
+                "address": "Shop 25, 26A & 12B on G/F, Tak Cheung Building, No.1 Hung Shui Kiu Main Street, Yuen Long, Yuen Long District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852UFL",
+                "address": "Shop No.79 on the Ground Floor of Ho Shun Lee Building, No.9 Fung Yau Street South, Yuen Long, Yuen Long District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              },
+              {
+                "code": "852UGL",
+                "address": "Shop 3, G/F and Cockloft, On Tai Building, 59-67 Yuen Long On Hing Street, Yuen Long, Yuen Long District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852UHL",
+                "address": "G/F23, Floor G, Golden Plaza, No. 28 Shui Che Kwun Street, Yuen Long, Yuen Long District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+          {
+            "name": "Tin Shui Wai",
+            "stores": [
+              {
+                "code": "852FBL",
+                "address": "Shop Nos. 24 & 25, G/F, Tin Shui Shopping Centre, Tin Shui Estate, Tin Shui Wai, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              },
+              {
+                "code": "852UCL",
+                "address": "Shop No. 310, 3/F., Tin Chak Shopping Centre, Nos. 71,73,75 and 77 Tin Shui Road, Tin Shui Wai, Yuen Long District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852UJL",
+                "address": "Shop 3007, 3/F, 8 Tin Sau Rd, Tin Shui Wai, Yuen Long District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:30",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+
+          {
+            "name": "Fanling",
+            "stores": [
+              {
+                "code": "852FHL",
+                "address": "Shop 111 & 112, G/F, Cheung Chung House, Cheung Wah Estate, 38 San Wan Road, Fanling, North District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852NFL",
+                "address": "Shop A, G/F, 17 Wo Tai Street, Luen Wo Market, Fanling, North District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852Z011",
+                "address": "Shop No. 103, G/F, Flora Plaza, 88 Pak Wo Road, Fanling, North District, N.T., Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852Z010",
+                "address": "Shop No. 7, G/F, Queens Hill Shopping Centre, Queens Hill Estate, Fanling, North District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:30",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+          {
+            "name": "Sheung Shui",
+            "stores": [
+              {
+                "code": "852FTL",
+                "address": "Shop 117, G/F, Choi Chu House, Choi Yuen Estate, Sheung Shui, North District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852NDL",
+                "address": "G/F, 4 Fu Hing Street, Sheung Shui, North District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "10:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+          {
+            "name": "Tsuen Wan",
+            "stores": [
+              {
+                "code": "852Z355",
+                "address": "Unit Nos. 807 & 808 on 8/F of Nan Fung Centre, 264-298 Castle Peak Road Tsuen Wan & 64-98 Sai Lau Kok Road, Tsuen Wan, Tsuen Wan District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+          {
+            "name": "Kwai Chung",
+            "stores": [
+              {
+                "code": "852LAL",
+                "address": "Shop G16, G/F, Hang King Garden, 9 Wing Fong Road, Kwai Chung, Kwai Tsing District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852LBL",
+                "address": "Shop 7, G/F, Kwai Do Building, 129-151 Tai Loong Street, Kwai Chung, Kwai Tsing District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "Delivery"
+              }
+            ]
+          },
+          {
+            "name": "Lai King",
+            "stores": [
+              {
+                "code": "852DEL",
+                "address": "Shop No. 4, G/F, Ming King House, Lai King Estate, Lai King, Kwai Tsing District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-20:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+          {
+            "name": "Tung Chung",
+            "stores": [
+              {
+                "code": "852GBL",
+                "address": "Shop No. 201, 2/F., Commercial Centre 1 (also known as Yat Tung Shopping Centre) (forming part of Commercial Blocks), Yat Tung Estate, 8 Yat Tung Street, Tung Chung, Islands District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "Applicable",
+                "airport_baggage_service": "/"
+              },
+              {
+                "code": "852Z351",
+                "address": "Customer Service Centre (near Shop 259), L2 Citygate Outlets, 20 Tat Tung Road, Tung Chung, Islands District, New Territories, Hong Kong (Provide shipping service only: only applicable to Citygate shoppers, One Citygate office staff and Novotel Citygate Hong Kong guests)",
+                "business_hours": {
+                  "mon_to_fri": "11:00-21:00",
+                  "sat_sun_public_holidays": "11:00-21:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              }
+            ]
+          },
+          {
+            "name": "Tsing Yi",
+            "stores": [
+              {
+                "code": "852Z352",
+                "address": "TSY 14-15, U2 Airport Express Platform, Tsing Yi Station, Tsing Yi, Kwai Tsing District, New Territories, Hong Kong",
+                "business_hours": {
+                  "mon_to_fri": "11:00-22:00",
+                  "sat_sun_public_holidays": "12:00-20:00"
+                },
+                "cold_chain_service": "/",
+                "airport_baggage_service": "/"
+              }
+            ]
+          }
+
+        ]
+       },
+      {
+        "name": "Chek Lap Kok Airport",
+        "districts": [
+          {
+            "name": "Chek Lap Kok",
+            "stores": [
+              {
+                "code": "852QB",
+                "address": "Counter 1 & 2, Zone J, T1 L7 check-in hall at the Hong Kong International Airport, Chek Lap Kok, Islands District, New Territories, Hong Kong ^852QB^\n\n(Pick-up service is not available)",
+                "business_hours": {
+                  "mon_to_fri": "08:00-21:00",
+                  "sat_sun_public_holidays": "08:00-21:00"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
