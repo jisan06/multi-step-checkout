@@ -47,7 +47,7 @@ if (!defined('ABSPATH')) {
             ?>
             <div class="shipping-fields" data-method-id="<?php echo esc_attr($method['id']); ?>" style="display: none;">
                 <?php
-                if( $method['id'] == 'local_pickup' ) {
+                if( $method['name'] == 'local_pickup' ) {
                     $ship_regions = [
                         0 => 'HK',
                         2 => 'TW',

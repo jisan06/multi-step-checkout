@@ -178,7 +178,7 @@ function apply_coupon_ajax() {
     if (!isset($_POST['coupon_code'])) {
         wp_send_json_error(['message' => 'No coupon provided']);
     }
-
+    remove_al_coupons();
     $coupon_code = sanitize_text_field($_POST['coupon_code']);
     $wc_coupon = new \WC_Coupon($coupon_code);
     $type = $wc_coupon->get_discount_type();
@@ -202,14 +202,19 @@ add_action('wp_ajax_remove_all_coupons', 'remove_all_coupons_ajax');
 add_action('wp_ajax_nopriv_remove_all_coupons', 'remove_all_coupons_ajax');
 
 function remove_all_coupons_ajax() {
-    $applied_coupons = WC()->cart->get_applied_coupons();
-    foreach ($applied_coupons as $coupon) {
-        WC()->cart->remove_coupon($coupon);
-    }
+    remove_al_coupons();
     WC()->cart->calculate_totals();
     wp_send_json_success([
         'total' => WC()->cart->get_total()
     ]);
+}
+
+function remove_al_coupons()
+{
+    $applied_coupons = WC()->cart->get_applied_coupons();
+    foreach ($applied_coupons as $coupon) {
+        WC()->cart->remove_coupon($coupon);
+    }
 }
 
 add_action('wp_ajax_update_shipping', 'update_shipping');

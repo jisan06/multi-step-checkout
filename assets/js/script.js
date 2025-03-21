@@ -378,54 +378,75 @@ jQuery(document).ready(function ($) {
         $('.confirm-data').show();
     });
     // Apply Coupon
-    $('.apply-button').on('click', function () {
-        var coupon_code = $(this).data('coupon');
-
-        $.ajax({
-            url: msc_core.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'apply_coupon',
-                coupon_code: coupon_code
-            },
-            success: function (response) {
-                if (response.success) {
-                    $('#discountAmount').html(response.data.discount);
-                    $('.msc-nav-total').html(response.data.total); // Update total cart amount
-                    $('#coupon_summary').show();
-                    $('#appliedCoupon .coupon-amount').html(response.data.discount);
-                    $('#appliedCoupon').show();
-                    $('.apply-button').hide();
-                } else {
-                    alert(response.message);
+    $('.apply-coupon-checkmark').on('change', function () {
+        let that = $(this);
+        var coupon_code = that.val();
+        if( that.is(':checked') ) {
+            $('.apply-coupon-checkmark').not(this).prop('checked', false);
+            $.ajax({
+                url: msc_core.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'apply_coupon',
+                    coupon_code: coupon_code
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#discountAmount').html(response.data.discount);
+                        $('.msc-nav-total').html(response.data.total); // Update total cart amount
+                        $('#coupon_summary').show();
+                        $('#appliedCoupon .coupon-amount').html(response.data.discount);
+                        $('#appliedCoupon').show();
+                        $('.apply-button').hide();
+                    } else {
+                        alert(response.message);
+                    }
                 }
-            }
-        });
+            });
+        }else {
+            $.ajax({
+                url: msc_core.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'remove_all_coupons'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#discountAmount').text('$0.00');
+                        $('.msc-nav-total').html(response.data.total); // Update total cart amount
+                        $('#coupon_summary').hide();
+                        $('#appliedCoupon').hide();
+                        $('.apply-button').show();
+                        button.text(buttonDefault)
+                    }
+                }
+            });
+        }
     });
 
     // Remove Coupon
-    $('#removeCoupon').on('click', function () {
-        let button = $(this)
-        let buttonDefault = $(this).text()
-        button.text('Removing...')
-        $.ajax({
-            url: msc_core.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'remove_all_coupons'
-            },
-            success: function (response) {
-                if (response.success) {
-                    $('#discountAmount').text('$0.00');
-                    $('.msc-nav-total').html(response.data.total); // Update total cart amount
-                    $('#coupon_summary').hide();
-                    $('#appliedCoupon').hide();
-                    $('.apply-button').show();
-                    button.text(buttonDefault)
-                }
-            }
-        });
-    });
+    // $('#removeCoupon').on('click', function () {
+    //     let button = $(this)
+    //     let buttonDefault = $(this).text()
+    //     button.text('Removing...')
+    //     $.ajax({
+    //         url: msc_core.ajaxurl,
+    //         type: 'POST',
+    //         data: {
+    //             action: 'remove_all_coupons'
+    //         },
+    //         success: function (response) {
+    //             if (response.success) {
+    //                 $('#discountAmount').text('$0.00');
+    //                 $('.msc-nav-total').html(response.data.total); // Update total cart amount
+    //                 $('#coupon_summary').hide();
+    //                 $('#appliedCoupon').hide();
+    //                 $('.apply-button').show();
+    //                 button.text(buttonDefault)
+    //             }
+    //         }
+    //     });
+    // });
 
 //place order
     $('#placeOrderButton').on('click', function(e) {
@@ -508,9 +529,7 @@ jQuery(document).ready(function ($) {
         let quantityInput = $(this).parents('.woosb-price-quantity:first').find('.woosb-quantity-input');
         if (quantityInput.length) {
             let currentValue = parseInt(quantityInput.val(), 10) || 0;
-            if (currentValue > 1) {
-                quantityInput.val(currentValue - 1);
-            }
+            quantityInput.val(currentValue - 1);
         }
         updateAddToCartButton();
     });

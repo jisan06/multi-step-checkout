@@ -216,9 +216,34 @@
 /*Coupon Section*/
 #coupon_wrap .coupon-items {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     border: 1px solid #d5d0d0;
+    background-color: #FFEFD6;
     padding: 10px;
+    margin-bottom: 10px;
+}
+.apply-coupon-checkmark {
+    width: 32px;
+    height: 32px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border-radius: 50%;
+    background-color: #F27400;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+.apply-coupon-checkmark:checked::before {
+    content: "\2713";
+    font-size: 18px;
+    color: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1.6, 1);
 }
 
 /*checkout section*/

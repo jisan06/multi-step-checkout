@@ -39,6 +39,8 @@ foreach ($coupons as $coupon_post) {
         // Check if the coupon is restricted to specific users
         if ( in_array($user_email, $allowed_emails) ) {
             $customer_coupons[] = $coupon;
+        }else {
+            continue;
         }
         /* Get coupon by email */
     }
@@ -54,9 +56,10 @@ foreach ($coupons as $coupon_post) {
 
 <div id="coupon_wrap" style="display: none;">
     <h3>你的優惠券</h3>
-    <div>
+    <div class="coupon-items-wrap">
         <?php
         if( ! empty($customer_coupons) ) {
+            $checked = '';
             foreach ($customer_coupons as $coupon) {
                 $coupon_expiry = $coupon->get_date_expires();
                 if ($coupon_expiry) {
@@ -66,6 +69,7 @@ foreach ($coupons as $coupon_post) {
                 }
                 $coupon_code = $coupon->get_code(); // Coupon code is the post title
                 $coupon = new \WC_Coupon($coupon_code);
+                $checked = $current_coupon == $coupon_code ? 'checked' : '';
                 $type = $coupon->get_discount_type();
                 if( $type == 'percent' ) {
                     $discount = '%' . $coupon->get_amount();
@@ -88,22 +92,31 @@ foreach ($coupons as $coupon_post) {
                             <div><?php echo '有效期至 ' . $expiry_date; // Format as YYYY-MM-DD?></div>							<div><a class="coupon-terms">使用規則 ❯</a></div>						</div>
                     </div>
                     <div class="coupon-btn">
-                        <button
-                                class="apply-coupon-btn apply-button"
-                                data-coupon="<?php echo esc_attr($coupon_code); ?>"
-                                style="<?php echo ! empty( $applied_coupons ) ? 'display: none;' : '' ?>"
-                        >
-                            確認
-                        </button>
+<!--                        <button-->
+<!--                                class="apply-coupon-btn apply-button"-->
+<!--                                data-coupon="--><?php //echo esc_attr($coupon_code); ?><!--"-->
+<!--                                style="--><?php //echo ! empty( $applied_coupons ) ? 'display: none;' : '' ?><!--"-->
+<!--                        >-->
+<!--                            確認-->
+<!--                        </button>-->
+                        <label for="coupon_<?php echo esc_attr($coupon_code); ?>">
+                            <input
+                                type="checkbox"
+                                id="coupon_<?php echo esc_attr($coupon_code); ?>"
+                                class="apply-coupon-checkmark"
+                                value="<?php echo esc_attr($coupon_code); ?>"
+                                <?php echo $checked; ?>
+                            >
+                        </label>
                     </div>
                 </div>
             <?php } }else { ?>
             <h5>You have no coupon</h5>
         <?php } ?>
     </div>
-    <div id="coupon_summary" style="<?php echo empty($applied_coupons) ? 'display: none;' : ''; ?>">
-        <p>You saved: <span id="discountAmount"><?php echo $discount_total; ?></span></p>
-        <button id="removeCoupon" class="remove-button">Remove</button>
-    </div>
+<!--    <div id="coupon_summary" style="--><?php //echo empty($applied_coupons) ? 'display: none;' : ''; ?><!--">-->
+<!--        <p>You saved: <span id="discountAmount">--><?php //echo $discount_total; ?><!--</span></p>-->
+<!--        <button id="removeCoupon" class="remove-button">Remove</button>-->
+<!--    </div>-->
     <button class="confirm-data backButton">確認</button>
 </div>

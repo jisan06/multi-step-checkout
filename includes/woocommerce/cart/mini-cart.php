@@ -61,7 +61,7 @@ if ( ! function_exists( 'msc_render_mini_cart_item' ) ) {
                             type="number"
                             class="woosb-quantity-input" id="quantity_<?php echo esc_attr($product_id);?>"
                             name="quantity"
-                            value="<?php echo $cart_item['quantity'] ?>"
+                            value="0"
                             min="0"
                             data-product-id="<?php echo $product_id?>"
                     >
@@ -89,7 +89,9 @@ if ( empty( $cart_items ) ) { ?>
                 再加購 <span class="msc-mini-add-more"></span> 餐 即可下單！
             </div>
             <div>
-                <button id="woosb-multi-mini-add-to-cart" class="button add-to-cart-button <?php echo $btn_class; ?>">立即下單</button>
+                <a href="<?php echo esc_url( wc_get_checkout_url() ); ?>" class="elementor-button elementor-button--checkout elementor-size-md">
+                    <span class="elementor-button-text"><?php echo esc_html__( 'Order Now', 'woocommerce' ); // phpcs:ignore WordPress.WP.I18n ?></span>
+                </a>
             </div>
         </div>
         <?php
@@ -114,9 +116,7 @@ if ( empty( $cart_items ) ) { ?>
             </div>
         </div>
         <div>
-            <a href="<?php echo esc_url( wc_get_checkout_url() ); ?>" class="elementor-button elementor-button--checkout elementor-size-md">
-                <span class="elementor-button-text"><?php echo esc_html__( 'Order Now', 'woocommerce' ); // phpcs:ignore WordPress.WP.I18n ?></span>
-            </a>
+            <button id="woosb-multi-mini-add-to-cart" class="button add-to-cart-button <?php echo $btn_class; ?>">立即下單</button>
             <div>6餐起送貨</div>
         </div>
     </div>
