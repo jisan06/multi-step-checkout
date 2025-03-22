@@ -14,6 +14,19 @@ async function loadLocationJSON(lang) {
         console.error('Error loading JSON:', error);
     }
 }
+(function ($) {
+    let otpBtn = $('.send-otp-btn');
+    window.recaptchaCallback = function () {
+        otpBtn.prop('disabled', false); // Enable button
+        otpBtn.removeClass('mouse-disable');
+    };
+
+    window.recaptchaExpiredCallback = function () {
+        otpBtn.prop('disabled', true); // Disable the button
+        otpBtn.addClass('mouse-disable'); // Add the disable class
+    };
+})(jQuery);
+
 jQuery(document).ready(function ($) {
     $('.select2').select2({
         width: '100%',
@@ -89,12 +102,43 @@ jQuery(document).ready(function ($) {
         $($(this).data("target")).addClass("active");
     });
 
+    function otpTimer(otpBtn, otpBtnText) {
+        let timerInterval;
+        let timeLeft = 60; // 1 minute (60 seconds)
+        let otpTimer = $('#otp_timer');
+
+        // Show the timer div
+        otpTimer.show();
+
+        // Start the countdown
+        timerInterval = setInterval(function() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            otpTimer.text(minutes + 'm ' + (seconds < 10 ? '0' : '') + seconds + 's');
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);  // Stop the timer
+                otpBtnEnable(otpBtn, otpBtnText)
+                otpTimer.hide(); // Hide the timer
+            }
+
+            timeLeft--;
+        }, 1000); // 1000ms = 1 second
+    }
+
+    function otpBtnEnable(otpBtn, otpBtnText) {
+        otpBtn.removeClass('mouse-disable');
+        otpBtn.prop('disabled', false).text(otpBtnText);
+    }
+
     // Handle OTP sending for mobile
     $("#send_otp").click(function () {
+        let that = $(this);
+        let otpBtnText = that.text();
         let mobileNumber = $("#mobile_number").val().trim();
         let mscCountryCC = $("#msc_country_cc").val().trim();
         let formatMobile = mscCountryCC + '' + mobileNumber;
-        if (mobileNumber == "") {
+        if (mobileNumber === "") {
             alert("Please enter your mobile number.");
             return;
         }
@@ -103,8 +147,10 @@ jQuery(document).ready(function ($) {
 
         // Generate a 6-digit OTP
         let otp = Math.floor(100000 + Math.random() * 900000);
-        let expiryTime = new Date(new Date().getTime() + 3600 * 1000).toUTCString(); // 3600s expiry
+        let expiryTime = new Date(new Date().getTime() + 60 * 1000).toUTCString(); // 1 minute expiry
 
+        that.addClass('mouse-disable');
+        that.prop('disabled', true).text(otpBtnText + '...');
         $.ajax({
             url: msc_core.ajaxurl, // Use localized script variable
             method: 'POST',
@@ -117,12 +163,15 @@ jQuery(document).ready(function ($) {
                 if (response.success) {
                     // Store OTP in JavaScript cookie
                     document.cookie = "otp=" + otp + "; expires=" + expiryTime + "; path=/;";
+                    otpTimer(that, otpBtnText);
                     alert('otp is send to your mobile')
                 } else {
+                    otpBtnEnable(that, otpBtnText);
                     alert('Error: ' + response.data); // Error message
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                otpBtnEnable(that, otpBtnText);
                 alert('Error: ' + textStatus);
             }
         });
@@ -197,7 +246,7 @@ jQuery(document).ready(function ($) {
 
         // Generate a 6-digit OTP
         let otp = Math.floor(100000 + Math.random() * 900000);
-        let expiryTime = new Date(new Date().getTime() + 3600 * 1000).toUTCString(); // 3600s expiry
+        let expiryTime = new Date(new Date().getTime() + 180 * 1000).toUTCString(); // 3 minute expiry
 
         $.ajax({
             url: msc_core.ajaxurl, // Use localized script variable

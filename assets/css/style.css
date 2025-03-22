@@ -121,6 +121,15 @@
     width: 100% !important;
     height: 100% !important;
 }
+.mouse-disable {
+    cursor: no-drop;
+}
+.login-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+}
 
 
 /*cart item tab*/

@@ -27,10 +27,17 @@ $cc_list = xoo_ml_get_country_codes();
         </div>
         <div id="otp-section">			<label>一次性驗證碼</label>
             <input type="text" id="otp_code" placeholder="輸入一次性驗證碼">
-            <button id="send_otp">領取驗證碼</button>
+            <button id="send_otp" class="send-otp-btn mouse-disable" disabled>領取驗證碼</button>
         </div>
-        <div>
+        <div class="login-btn-group">
+            <div
+                class="g-recaptcha"
+                data-sitekey="<?php echo GOOGLE_RECAPTCHA_SITE_KEY;?>"
+                data-callback="recaptchaCallback"
+                data-expired-callback="recaptchaExpiredCallback"
+            ></div>
             <button id="verify_otp">登錄</button>
+            <div id="otp_timer" style="display: none;"></div>
         </div>
     </div>
 
@@ -41,7 +48,15 @@ $cc_list = xoo_ml_get_country_codes();
             </div>		</div>
         <div id="otp-section">			<label>一次性驗證碼</label>
             <input type="text" id="email_otp_code" placeholder="輸入一次性驗證碼">
-            <button id="send_otp_email">領取驗證碼</button>
+            <button id="send_otp_email" class="send-otp-btn mouse-disable" disabled>領取驗證碼</button>
         </div>
-        <button id="login_email">登錄</button>
+        <div class="login-btn-group">
+            <div
+                class="g-recaptcha"
+                data-sitekey="<?php echo GOOGLE_RECAPTCHA_SITE_KEY;?>"
+                data-callback="recaptchaCallback"
+                data-expired-callback="recaptchaExpiredCallback"
+            ></div>
+            <button id="login_email">登錄</button>
+        </div>
     </div></div>

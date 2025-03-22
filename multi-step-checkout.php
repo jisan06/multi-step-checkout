@@ -24,6 +24,7 @@ function msc_enqueue_scripts() {
 
     wp_enqueue_style( 'select2' );
     wp_enqueue_script( 'select2' );
+    wp_enqueue_script('msc-captcha-script', 'https://www.google.com/recaptcha/api.js', array('jquery'), MSC_VER, true);
     wp_enqueue_script('msc-script', MSC_PLUGIN_URL . 'assets/js/script.js', array('jquery'), MSC_VER, true);
     wp_localize_script('msc-script', 'msc_core', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
