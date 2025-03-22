@@ -2,6 +2,14 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
+$packages = WC()->shipping()->get_packages();
+$active_shipping_methods = [];
+foreach ($packages as $package) {
+    $rates = $package['rates'];
+    foreach ($rates as $method) {
+        $active_shipping_methods[] = $method;
+    }
+}
 ?>
 
 <div class="shipping-methods" style="display: none">
@@ -16,7 +24,7 @@ if (!defined('ABSPATH')) {
 
         if (!empty($active_shipping_methods)) {
             foreach ($active_shipping_methods as $method) {
-                $method_id = esc_attr($method['id']);
+                $method_id = esc_attr($method->id);
                 $checked = ($method_id === $default_shipping_method || strpos($default_shipping_method, $method_id) === 0) ? 'checked' : '';
                 ?>
                 <label for="<?php echo $method_id; ?>">
@@ -25,10 +33,10 @@ if (!defined('ABSPATH')) {
                                 type="radio"
                                 name="shipping_method" value="<?php echo $method_id; ?>"
                                 id="<?php echo $method_id; ?>" <?php /*echo $checked; */?>
-                                data-cost="<?php echo esc_attr($method['cost']); ?>"
-                                data-title="<?php echo esc_attr($method['title']); ?>"
+                                data-cost="<?php echo esc_attr($method->cost); ?>"
+                                data-title="<?php echo esc_attr($method->label); ?>"
                         >
-                        <?php echo esc_html($method['title']); ?> - <?php echo wc_price($method['cost']); ?>
+                        <?php echo esc_html($method->label); ?> - <?php echo wc_price($method->cost); ?>
                         <span class="arrow">→</span> <!-- Right arrow -->
                     </div>
                 </label>
@@ -45,9 +53,9 @@ if (!defined('ABSPATH')) {
     if (!empty($active_shipping_methods)) {
         foreach ($active_shipping_methods as $method) {
             ?>
-            <div class="shipping-fields" data-method-id="<?php echo esc_attr($method['id']); ?>" style="display: none;">
+            <div class="shipping-fields" data-method-id="<?php echo esc_attr($method->id); ?>" style="display: none;">
                 <?php
-                if( $method['name'] == 'local_pickup' ) {
+                if( $method->method_id == 'local_pickup' ) {
                     $ship_regions = [
                         0 => 'HK',
                         2 => 'TW',

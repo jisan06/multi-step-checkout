@@ -163,6 +163,7 @@ jQuery(document).ready(function ($) {
                 if (response.success) {
                     // Store OTP in JavaScript cookie
                     document.cookie = "otp=" + otp + "; expires=" + expiryTime + "; path=/;";
+                    that.text(otpBtnText);
                     otpTimer(that, otpBtnText);
                     alert('otp is send to your mobile')
                 } else {
