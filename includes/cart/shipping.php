@@ -30,11 +30,13 @@ foreach ($packages as $package) {
                 <label for="<?php echo $method_id; ?>">
                     <div class="shipping-method" data-method-id="<?php echo $method_id; ?>">
                         <input
-                                type="radio"
-                                name="shipping_method" value="<?php echo $method_id; ?>"
-                                id="<?php echo $method_id; ?>" <?php /*echo $checked; */?>
-                                data-cost="<?php echo esc_attr($method->cost); ?>"
-                                data-title="<?php echo esc_attr($method->label); ?>"
+                            type="radio"
+                            name="shipping_method"
+                            value="<?php echo $method_id; ?>"
+                            id="<?php echo $method_id; ?>" <?php /*echo $checked; */?>
+                            data-cost="<?php echo esc_attr($method->cost); ?>"
+                            data-title="<?php echo esc_attr($method->label); ?>"
+                            data-slug="<?php echo esc_attr($method->method_id); ?>"
                         >
                         <?php echo esc_html($method->label); ?> - <?php echo wc_price($method->cost); ?>
                         <span class="arrow">→</span> <!-- Right arrow -->
@@ -45,7 +47,7 @@ foreach ($packages as $package) {
         }
     ?>
 
-    <button class="next-step disabled">Next Step</button>
+<!--    <button class="next-step disabled">Next Step</button>-->
 </div>
 
 <div class="shipping-methods-details" style="display: none">

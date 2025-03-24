@@ -319,15 +319,16 @@ jQuery(document).ready(function ($) {
     $('#toggleShipping').on('click', function() {
         shippingMethodShow();
     });
-    $('.shipping-methods .next-step').on('click', function() {
-        shippingMethodFields();
-    })
+    // $('.shipping-methods .next-step').on('click', function() {
+    //     shippingMethodFields();
+    // })
 
-    $('input[name="shipping_method"]').on('change', function() {
-        $(".shipping-methods .next-step").removeClass('disabled');
+    $('input[name="shipping_method"]').on('click', function() {
+        // $(".shipping-methods .next-step").removeClass('disabled');
         $("#placeOrderButton").removeClass('disabled');
         var shipLabel = $(this).parents('.shipping-method:first').find('.shipping-label').text()
-        $('#selectedShippingMethod').text(shipLabel)
+        $('#selectedShippingMethod').text(shipLabel);
+        shippingMethodFields();
     });
 
     function cartPage() {
@@ -411,7 +412,7 @@ jQuery(document).ready(function ($) {
     })
 
     $('#shipping_address_wrap #shipping_address').on('change', function () {
-        selectedAddress = $("#shipping_address_wrap #shipping_address option:selected").text();
+        selectedAddress = $("#shipping_address_wrap #shipping_address option:selected").val();
     })
 
     //Shipping code end
@@ -534,6 +535,7 @@ jQuery(document).ready(function ($) {
         var orderData = {
             action: 'place_order',
             shipping_method: shippingMethod,
+            shipping_slug: shipping.data('slug'),
             shipping_title: shippingTitle,
             shipping_cost: shippingCost,
 

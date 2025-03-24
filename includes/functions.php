@@ -250,6 +250,7 @@ function place_order() {
     // Get WooCommerce Cart and Customer data
     $cart = WC()->cart->get_cart();
     $shipping_method = sanitize_text_field($_POST['shipping_method']);
+    $shipping_slug = sanitize_text_field($_POST['shipping_slug']);
     $shipping_cost = sanitize_text_field($_POST['shipping_cost']);
     $shipping_title = sanitize_text_field($_POST['shipping_title']);
     $payment_method = 'qfpay';
@@ -309,13 +310,46 @@ function place_order() {
     $shipping_item->set_method_title($shipping_title . ( $country_name ? '(' . $country_name .')' : '' ));
     $shipping_item->set_total($shipping_cost);
 
-    if( $shipping_method === 'local_pickup' ) {
+    if( $shipping_slug === 'local_pickup' ) {
+        $lang = 'english';
+        $location_json = MSC_PLUGIN_PATH . 'lib/locations.json';
+        $location_data = json_decode(file_get_contents($location_json), true)[$lang];
+        $regions = $location_data['regions'];
+
+
+        foreach ($regions as $region_obj) {
+            if ($region_obj['name'] === $region) { // Find region
+                foreach ($region_obj['districts'] as $district_obj) {
+                    if ($district_obj['name'] === $district) { // Find district
+                        foreach ($district_obj['stores'] as $store) {
+                            if ($store['code'] === $shipping_address) { // Find store by code
+                                $shipping_address = $store['address'];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         $shipping_item->add_meta_data('Region', $region);
         $shipping_item->add_meta_data('District', $district);
         $shipping_item->add_meta_data(
             'Delivery Address',
             $shipping_address
         );
+
+        // Set billing and shipping addresses
+        $order->set_address([
+            'address_1' => $shipping_address,
+            'state' => strtoupper($region),
+            'country' => $country,
+        ], 'billing');
+
+        $order->set_address([
+            'address_1' => $shipping_address,
+            'state' => strtoupper($region),
+            'country' => $country,
+        ], 'shipping');
     }else {
         $shipping_item->add_meta_data(
             'Delivery Address',
@@ -324,32 +358,20 @@ function place_order() {
         $shipping_item->add_meta_data('Contact Number', $contact_number);
         $shipping_item->add_meta_data('Contact Person', $contact_person);
         $shipping_item->add_meta_data('Delivery Notes', $delivery_note);
+
+        // Set billing and shipping addresses
+        $order->set_address([
+            'address_1' => $shipping_address,
+            'phone' => $contact_number, // Save phone number
+        ], 'billing');
+
+        $order->set_address([
+            'address_1' => $shipping_address,
+            'phone' => $contact_number, // Save phone number
+        ], 'shipping');
     }
 
     $order->add_item($shipping_item);
-
-    // Set billing and shipping addresses
-    $order->set_address([
-        'address_1' => $shipping_address,
-//        'city' => '', // Add city if you have it
-//        'state' => $state,
-//        'postcode' => '', // Add postcode if you have it
-//        'country' => $country,
-//        'email' => '', // Add email if you have it
-//        'phone' => $contact_number, // Save phone number
-    ], 'billing');
-
-    $order->set_address([
-        'address_1' => $shipping_address,
-//        'city' => '', // Add city if you have it
-//        'state' => $state,
-//        'postcode' => '', // Add postcode if you have it
-//        'country' => $country,
-//        'email' => '', // Add email if you have it
-//        'phone' => $contact_number, // Save phone number
-//        'contact_person' => $contact_person, // Save phone number
-//        'delivery_note' => $delivery_note, // Save phone number
-    ], 'shipping');
 
     // Apply coupon code if provided
     if (!empty($coupon_code)) {
