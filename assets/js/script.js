@@ -578,10 +578,14 @@ jQuery(document).ready(function ($) {
         let productId = $(this).attr("data-product-id");
         let quantityInput = $(this).parents('.woosb-price-quantity:first').find('.woosb-quantity-input');
         if (quantityInput.length) {
-            let currentValue = parseInt(quantityInput.val(), 10) || 0;
-            quantityInput.val(currentValue - 1);
+            let currentValue = parseInt(quantityInput.val(), 10);
+            let val = currentValue - 1;
+            if( val < 0 ) {
+                val = 0;
+            }
+            quantityInput.val(val);
+            updateAddToCartButton();
         }
-        updateAddToCartButton();
     });
 
     $(document).on('click',  '.woosb-quantity-plus', function () {
@@ -613,7 +617,8 @@ jQuery(document).ready(function ($) {
     function updateAddToCartButton() {
         totalQty = 0
         let totalMiniQty = 0
-        $('.woosb-quantity .woosb-quantity-input').each(function() {
+        let requiredQty = 0;
+        $('.woosb-bundle .woosb-quantity .woosb-quantity-input').each(function() {
             let quantity = parseInt($(this).val());
             totalQty += quantity;
         });
@@ -621,14 +626,14 @@ jQuery(document).ready(function ($) {
             let quantity = parseInt($(this).val());
             totalMiniQty += quantity;
         });
-        if( totalMiniQty < 6 ) {
-            let addMoreQty = 6 - totalMiniQty;
+        if( totalMiniQty < requiredQty ) {
+            let addMoreQty = requiredQty - totalMiniQty;
             $('.msc-mini-add-more').text(addMoreQty)
             $('.msc-mini-add-more-wrap').show()
         }else {
             $('.msc-mini-add-more-wrap').hide()
         }
-        if (totalQty >= 6 || cartCount >= 6) {
+        if (totalQty > requiredQty/* || cartCount >= requiredQty*/) {
             $('#woosb-multi-add-to-cart').removeClass('disabled');
         } else {
             $('#woosb-multi-add-to-cart').addClass('disabled');

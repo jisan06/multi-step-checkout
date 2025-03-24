@@ -22,32 +22,35 @@ foreach ($coupons as $coupon_post) {
     $coupon = new \WC_Coupon($coupon_post->post_title);
 
     /* Get coupon by email */
-    $allowed_emails = get_post_meta($coupon_post->ID, 'customer_email', true);
-    $expiry_date = get_post_meta($coupon_post->ID, 'date_expires', true); // Coupon expiry date
-
-    // Validate expiry date
-    if (!empty($expiry_date) && time() > $expiry_date) {
-        continue; // Skip expired coupons
-    }
-
-    if( !empty($allowed_emails) ) {
-        // Convert allowed emails to an array if stored as a string
-        if ( !is_array( $allowed_emails ) ) {
-            $allowed_emails = explode(',', $allowed_emails);
-        }
-
-        // Check if the coupon is restricted to specific users
-        if ( in_array($user_email, $allowed_emails) ) {
-            $customer_coupons[] = $coupon;
-        }else {
-            continue;
-        }
-        /* Get coupon by email */
-    }
-
-    /* Get coupon by minimum amount */
-    $minimum_spend = $coupon->get_minimum_amount();
-    if ( ! empty($minimum_spend) && $cart_sub_total >= $minimum_spend ) {
+//    $allowed_emails = get_post_meta($coupon_post->ID, 'customer_email', true);
+//    $expiry_date = get_post_meta($coupon_post->ID, 'date_expires', true); // Coupon expiry date
+//
+//    // Validate expiry date
+//    if (!empty($expiry_date) && time() > $expiry_date) {
+//        continue; // Skip expired coupons
+//    }
+//
+//    if( !empty($allowed_emails) ) {
+//        // Convert allowed emails to an array if stored as a string
+//        if ( !is_array( $allowed_emails ) ) {
+//            $allowed_emails = explode(',', $allowed_emails);
+//        }
+//
+//        // Check if the coupon is restricted to specific users
+//        if ( in_array($user_email, $allowed_emails) ) {
+//            $customer_coupons[] = $coupon;
+//        }else {
+//            continue;
+//        }
+//        /* Get coupon by email */
+//    }
+//
+//    /* Get coupon by minimum amount */
+//    $minimum_spend = $coupon->get_minimum_amount();
+//    if ( ! empty($minimum_spend) && $cart_sub_total >= $minimum_spend ) {
+//        $customer_coupons[] = $coupon;
+//    }
+    if ($coupon->is_valid()) {
         $customer_coupons[] = $coupon;
     }
     /* Get coupon by minimum amount */

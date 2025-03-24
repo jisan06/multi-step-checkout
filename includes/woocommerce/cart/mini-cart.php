@@ -61,7 +61,7 @@ if ( ! function_exists( 'msc_render_mini_cart_item' ) ) {
                             type="number"
                             class="woosb-quantity-input" id="quantity_<?php echo esc_attr($product_id);?>"
                             name="quantity"
-                            value="0"
+                            value="<?php echo $cart_item['quantity'] ?>"
                             min="0"
                             data-product-id="<?php echo $product_id?>"
                     >
