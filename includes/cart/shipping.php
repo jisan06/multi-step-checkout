@@ -15,7 +15,7 @@ foreach ($packages as $package) {
 <div class="shipping-methods" style="display: none">
     <?php
         $location_json = MSC_PLUGIN_PATH . 'lib/locations.json';
-        $lang = 'english';
+        $lang = 'chinese';
         $location_data = json_decode(file_get_contents($location_json), true)[$lang];
         $regions = $location_data['regions'];
 
@@ -23,14 +23,15 @@ foreach ($packages as $package) {
         $default_shipping_method = !empty($chosen_shipping_methods) ? $chosen_shipping_methods[0] : '';
 
         if (!empty($active_shipping_methods)) {
-            foreach ($active_shipping_methods as $method) {
+            foreach ($active_shipping_methods as $index => $method) {
                 $method_id = esc_attr($method->id);
                 $checked = ($method_id === $default_shipping_method || strpos($default_shipping_method, $method_id) === 0) ? 'checked' : '';
                 ?>
                 <label for="<?php echo $method_id; ?>">
+                    <div>運送方式 <?php echo $index; ?></div>
                     <div class="shipping-method" data-method-id="<?php echo $method_id; ?>">
                         <input
-                            type="radio"
+                            type="hidden"
                             name="shipping_method"
                             value="<?php echo $method_id; ?>"
                             id="<?php echo $method_id; ?>" <?php /*echo $checked; */?>
@@ -38,7 +39,7 @@ foreach ($packages as $package) {
                             data-title="<?php echo esc_attr($method->label); ?>"
                             data-slug="<?php echo esc_attr($method->method_id); ?>"
                         >
-                        <?php echo esc_html($method->label); ?> - <?php echo wc_price($method->cost); ?>
+                        <?php echo esc_html($method->label); ?> + <?php echo wc_price($method->cost); ?>
                         <span class="arrow">→</span> <!-- Right arrow -->
                     </div>
                 </label>
@@ -68,7 +69,7 @@ foreach ($packages as $package) {
                 ?>
                     <input type="hidden" name="shipping_country" id="shipping_country" value="<?php echo $region_short; ?>">
                     <p class="form-row form-row-wide" id="shipping_region_wrap">
-                        <label for="shipping_region"><?php esc_html_e( 'Region', 'woocommerce' ); ?></label>
+                        <label for="shipping_region">地區</label>
                         <select name="shipping_region" id="shipping_region" class="shipping_region select2">
                             <option value="">Select Region</option>
                             <?php
@@ -79,13 +80,13 @@ foreach ($packages as $package) {
                         </select>
                     </p>
                     <p class="form-row form-row-wide" id="shipping_district_wrap">
-                        <label for="shipping_district"><?php esc_html_e( 'District', 'woocommerce' ); ?></label>
+                        <label for="shipping_district">區</label>
                         <select name="shipping_district" id="shipping_district" class="shipping_district select2">
                             <option value="">Select District</option>
                         </select>
                     </p>
                     <p class="form-row form-row-wide" id="shipping_address_wrap">
-                        <label for="shipping_address"><?php esc_html_e( 'Address', 'woocommerce' ); ?></label>
+                        <label for="shipping_address">地址</label>
                         <select name="shipping_address" id="shipping_address" class="shipping_address select2">
                             <option value="">Select Address</option>
                         </select>

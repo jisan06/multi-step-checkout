@@ -311,7 +311,7 @@ function place_order() {
     $shipping_item->set_total($shipping_cost);
 
     if( $shipping_slug === 'local_pickup' ) {
-        $lang = 'english';
+        $lang = 'chinese';
         $location_json = MSC_PLUGIN_PATH . 'lib/locations.json';
         $location_data = json_decode(file_get_contents($location_json), true)[$lang];
         $regions = $location_data['regions'];

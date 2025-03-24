@@ -2,7 +2,7 @@ let locationRegions = {}
 let selectedRegion  = {}
 let selectedDistrict  = {}
 let selectedAddress  = {}
-loadLocationJSON('english')
+loadLocationJSON('chinese')
 async function loadLocationJSON(lang) {
     try {
         const response = await fetch('/wp-content/plugins/multi-step-checkout/lib/locations.json');
@@ -30,8 +30,13 @@ async function loadLocationJSON(lang) {
 jQuery(document).ready(function ($) {
     $('.select2').select2({
         width: '100%',
-        placeholder: "Select an option",
-        allowClear: false
+        placeholder: "選擇一個選項",
+        allowClear: false,
+        language: {
+            noResults: function() {
+                return "未找到結果"; // Change this to your desired text
+            }
+        }
     });
     let currentStep = $('.msc-current-step').val() ?? 1;
 
@@ -323,12 +328,13 @@ jQuery(document).ready(function ($) {
     //     shippingMethodFields();
     // })
 
-    $('input[name="shipping_method"]').on('click', function() {
+    $('.shipping-method').on('click', function() {
+        let that = $(this)
         // $(".shipping-methods .next-step").removeClass('disabled');
         $("#placeOrderButton").removeClass('disabled');
-        var shipLabel = $(this).parents('.shipping-method:first').find('.shipping-label').text()
+        var shipLabel = that.find('.shipping-label').text()
         $('#selectedShippingMethod').text(shipLabel);
-        shippingMethodFields();
+        shippingMethodFields(that);
     });
 
     function cartPage() {
@@ -352,11 +358,11 @@ jQuery(document).ready(function ($) {
         $('.confirm-data').hide()
     }
 
-    function shippingMethodFields() {
+    function shippingMethodFields(parent) {
         $('.confirm-data').show();
         $('.shipping-methods').hide();
         $('.shipping-fields').hide();
-        var selectedMethodId = $('input[name="shipping_method"]:checked').val();
+        var selectedMethodId = parent.data('method-id');
         $('.shipping-methods-details').show();
         $('.shipping-methods-details .shipping-fields[data-method-id="' + selectedMethodId + '"]').show();
         $.ajax({
@@ -405,7 +411,7 @@ jQuery(document).ready(function ($) {
 
         if (selectedDistrict) {
             selectedDistrict.stores.forEach(store => {
-                let storeDetails = `${store.code} - ${store.address} (Mon-Fri: ${store.business_hours.mon_to_fri}, Sat-Sun: ${store.business_hours.sat_sun_public_holidays})`;
+                let storeDetails = `${store.code} - ${store.address} (週一至週五: ${store.business_hours.mon_to_fri}, 週六至週日: ${store.business_hours.sat_sun_public_holidays})`;
                 addressDropdown.append(`<option value="${store.code}">${storeDetails}</option>`);
             });
         }
