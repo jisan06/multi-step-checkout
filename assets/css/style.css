@@ -222,6 +222,10 @@
     padding: .5rem 1rem;
     transition: all .3s;
 }
+.del-price .woocommerce-Price-amount {
+    text-decoration: line-through;
+}
+
 /*Coupon Section*/
 #coupon_wrap .coupon-items {
     display: flex;

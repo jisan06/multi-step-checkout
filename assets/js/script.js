@@ -66,7 +66,7 @@ jQuery(document).ready(function ($) {
 
     $('.confirm-data').click(function () {
         let ShippingField = $(this).parents('.shipping-methods-details:first').find('.shipping-fields:visible')
-        let ShippingMethod = ShippingField.attr('data-method-id')
+        let ShippingMethod = ShippingField.attr('data-method-name')
         if( ShippingMethod === 'local_pickup' ) {
             let region = ShippingField.find('#shipping_region').val();
             let district = ShippingField.find('#shipping_district').val();
@@ -328,11 +328,11 @@ jQuery(document).ready(function ($) {
     //     shippingMethodFields();
     // })
 
-    $('.shipping-method').on('click', function() {
+    $('input[name="shipping_method"]').on('click', function() {
         let that = $(this)
         // $(".shipping-methods .next-step").removeClass('disabled');
         $("#placeOrderButton").removeClass('disabled');
-        var shipLabel = that.find('.shipping-label').text()
+        var shipLabel = that.parents('.shipping-method:first').find('.shipping-label').text()
         $('#selectedShippingMethod').text(shipLabel);
         shippingMethodFields(that);
     });
@@ -358,13 +358,15 @@ jQuery(document).ready(function ($) {
         $('.confirm-data').hide()
     }
 
-    function shippingMethodFields(parent) {
+    function shippingMethodFields(obj) {
         $('.confirm-data').show();
         $('.shipping-methods').hide();
         $('.shipping-fields').hide();
-        var selectedMethodId = parent.data('method-id');
+        var selectedMethodId = obj.val();
         $('.shipping-methods-details').show();
+        var freeShippingId = $('.free_shipping_id').val();
         $('.shipping-methods-details .shipping-fields[data-method-id="' + selectedMethodId + '"]').show();
+        selectedMethodId = freeShippingId ? freeShippingId : selectedMethodId;
         $.ajax({
             type: 'POST',
             url: msc_core.ajaxurl,
@@ -434,32 +436,22 @@ jQuery(document).ready(function ($) {
         $('#backButton').show();
         $('.confirm-data').show();
     });
+
+    $('#apply_coupon_btn').on('click', function () {
+        let couponCode = $('#coupon-input').val()
+        if( couponCode == '' ) {
+            alert('Field must not empty')
+            return;
+        }
+        applyCouponCode(couponCode);
+    })
     // Apply Coupon
     $('.apply-coupon-checkmark').on('change', function () {
         let that = $(this);
         var coupon_code = that.val();
         if( that.is(':checked') ) {
             $('.apply-coupon-checkmark').not(this).prop('checked', false);
-            $.ajax({
-                url: msc_core.ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'apply_coupon',
-                    coupon_code: coupon_code
-                },
-                success: function (response) {
-                    if (response.success) {
-                        $('#discountAmount').html(response.data.discount);
-                        $('.msc-nav-total').html(response.data.total); // Update total cart amount
-                        $('#coupon_summary').show();
-                        $('#appliedCoupon .coupon-amount').html(response.data.discount);
-                        $('#appliedCoupon').show();
-                        $('.apply-button').hide();
-                    } else {
-                        alert(response.message);
-                    }
-                }
-            });
+            applyCouponCode(coupon_code);
         }else {
             $.ajax({
                 url: msc_core.ajaxurl,
@@ -480,6 +472,30 @@ jQuery(document).ready(function ($) {
             });
         }
     });
+
+    function applyCouponCode(coupon_code) {
+        $.ajax({
+            url: msc_core.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'apply_coupon',
+                coupon_code: coupon_code
+            },
+            success: function (response) {
+                if (response.success) {
+                    $('#discountAmount').html(response.data.discount);
+                    $('.msc-nav-total').html(response.data.total); // Update total cart amount
+                    $('#coupon_summary').show();
+                    $('#appliedCoupon .coupon-amount').html(response.data.discount);
+                    $('#appliedCoupon').show();
+                    $('.apply-button').hide();
+                    $('#coupon_' + coupon_code).prop('checked', true)
+                } else {
+                    alert(response.message);
+                }
+            }
+        });
+    }
 
     // Remove Coupon
     // $('#removeCoupon').on('click', function () {
@@ -505,7 +521,7 @@ jQuery(document).ready(function ($) {
     //     });
     // });
 
-//place order
+    //place order
     $('#placeOrderButton').on('click', function(e) {
         e.preventDefault(); // Prevent default form submission
 
@@ -514,6 +530,7 @@ jQuery(document).ready(function ($) {
         var shippingCost = shipping.data('cost');
         var shippingTitle = shipping.data('title');
         var shippingMethod = shipping.val();
+        var shippingMethodName = shipping.data('method-name');
         if (!shippingMethod) {
             alert('Please select a shipping method.');
             return;
@@ -531,8 +548,12 @@ jQuery(document).ready(function ($) {
         var country = shippingContainer.find('#shipping_country').val();
         var region = shippingContainer.find('#shipping_region').val();
         var district = shippingContainer.find('#shipping_district').val();
-
-        if( shippingMethod === 'local_pickup' ) {
+        var freeShippingId = $('.free_shipping_id').val();
+        if( freeShippingId ) {
+            shippingMethod = freeShippingId;
+            shippingCost = 0;
+        }
+        if( shippingMethodName === 'local_pickup' ) {
             shippingAddress = selectedAddress;
         }
         var couponCode = $('#couponCode').val(); // Get coupon code
@@ -541,7 +562,7 @@ jQuery(document).ready(function ($) {
         var orderData = {
             action: 'place_order',
             shipping_method: shippingMethod,
-            shipping_slug: shipping.data('slug'),
+            shipping_name: shippingMethodName,
             shipping_title: shippingTitle,
             shipping_cost: shippingCost,
 
@@ -556,7 +577,6 @@ jQuery(document).ready(function ($) {
 
             coupon_code: couponCode,
         };
-
         // Send AJAX request to place order
         $.ajax({
             url: msc_core.ajaxurl,
