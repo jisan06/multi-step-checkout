@@ -199,6 +199,9 @@
     transition: background-color 0.3s;
     cursor: pointer;
 }
+.shipping-method.active {
+    border: 3px solid #F27400 !important;
+}
 
 .shipping-method:hover {
     background-color: #eaeaea;

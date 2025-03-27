@@ -332,8 +332,10 @@ jQuery(document).ready(function ($) {
         let that = $(this)
         // $(".shipping-methods .next-step").removeClass('disabled');
         $("#placeOrderButton").removeClass('disabled');
-        var shipLabel = that.parents('.shipping-method:first').find('.shipping-label').text()
-        $('#selectedShippingMethod').text(shipLabel);
+        $('.shipping-method').removeClass('active');
+        let parent = that.parents('.shipping-method:first');
+        parent.addClass('active');
+        $('#selectedShippingMethod').text(that.data('title'));
         shippingMethodFields(that);
     });
 

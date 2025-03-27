@@ -1,12 +1,32 @@
 <?php
-    if (!defined('ABSPATH')) {
-        exit; // Exit if accessed directly
-    }
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
 
-    WC()->cart->calculate_totals();
-    // Get WooCommerce cart contents
-    $cart = WC()->cart->get_cart();
-    $cart_count = WC()->cart->get_cart_contents_count();
+WC()->cart->calculate_totals();
+// Get WooCommerce cart contents
+$cart = WC()->cart->get_cart();
+$cart_count = WC()->cart->get_cart_contents_count();
+
+$chosen_shipping_methods = WC()->session->get('chosen_shipping_methods');
+$default_shipping_method = !empty($chosen_shipping_methods) ? $chosen_shipping_methods[0] : '';
+$default_shipping_title = '請選擇運送方式';
+
+$packages = WC()->shipping()->get_packages();
+$active_shipping_methods = [];
+
+$free_shipping_id = '';
+foreach ($packages as $package) {
+    $rates = $package['rates'];
+    foreach ($rates as $method) {
+        if( $method->id == 'advanced_free_shipping' ) {
+            $free_shipping_id = $method->id;
+        }elseif (strpos($default_shipping_method, $method->id) !== false) {
+            $default_shipping_title = $method->label;
+        }
+        $active_shipping_methods[] = $method;
+    }
+}
 //    $shipping_zones = WC_Shipping_Zones::get_zones();
 //    $active_shipping_methods = [];
 //
@@ -31,24 +51,24 @@
 //        }
 //    }
 
-    $applied_coupons = WC()->cart->get_applied_coupons();
-    $discount_amount_percent = 0;
-    $discount_total = 0;
-    $current_coupon = '';
-    $total_cart = WC()->cart->get_subtotal();
-    if (!empty($applied_coupons)) {
-        foreach ($applied_coupons as $coupon_code) {
-            $wc_coupon = new \WC_Coupon($coupon_code);
-            $type = $wc_coupon->get_discount_type();
-            $current_coupon = $wc_coupon->get_code();
-            if( $type == 'percent' ) {
-                $discount_amount_percent = '%' . $wc_coupon->get_amount();
-            }
-            $discount_total = WC()->cart->get_coupon_discount_amount($coupon_code);
+$applied_coupons = WC()->cart->get_applied_coupons();
+$discount_amount_percent = 0;
+$discount_total = 0;
+$current_coupon = '';
+//$total_cart = WC()->cart->get_subtotal();
+if (!empty($applied_coupons)) {
+    foreach ($applied_coupons as $coupon_code) {
+        $wc_coupon = new \WC_Coupon($coupon_code);
+        $type = $wc_coupon->get_discount_type();
+        $current_coupon = $wc_coupon->get_code();
+        if( $type == 'percent' ) {
+            $discount_amount_percent = '%' . $wc_coupon->get_amount();
         }
+        $discount_total = WC()->cart->get_coupon_discount_amount($coupon_code);
     }
+}
 //    $total_cart = $total_cart - $discount_total;
-    $total_cart = wc()->cart->get_total();
+$total_cart = wc()->cart->get_total();
 ?>
     <div class="cart-items-wrap">
         <div class="cart-items">
@@ -102,15 +122,18 @@
 
         <!-- Shipping Methods Section -->
         <div class="toggleShipWrap">
-            <button id="toggleShipping"><span>運送方式</span><span class="shipping-sub">請選擇運送方式</span></button>
-            <div id="selectedShippingMethod"></div>
+            <button id="toggleShipping"><span>運送方式</span>
+                <span class="shipping-sub" id="selectedShippingMethod">
+                    <?php echo $default_shipping_title; ?>
+                </span>
+            </button>
         </div>
 
         <!-- Coupon Toggle Section -->
         <div class="coupon-section">
             <button
-                id="toggleCoupon"
-                class="toggle-button"
+                    id="toggleCoupon"
+                    class="toggle-button"
             >
                 <span>兌換</span>
                 <span class="shipping-sub">請輸入優惠碼或選擇購物現金券</span>
