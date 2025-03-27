@@ -381,7 +381,6 @@ function place_order() {
             $result = $payment_gateways[$payment_method]->process_payment($order_id);
 
             if ($result['result'] === 'success') {
-                WC()->cart->empty_cart();
 
                 // Trigger ShipAny's auto-create via payment successful hook
                 do_action('woocommerce_payment_successful_result', $result, $order_id);
@@ -394,7 +393,6 @@ function place_order() {
         }
 
         $order->update_status('pending');
-        WC()->cart->empty_cart();
 
         wp_send_json_success([
             'redirect_url' => $order->get_checkout_order_received_url(),
@@ -633,4 +631,13 @@ function msc_woocommerce_template( $template, $template_name, $template_path ) {
         }
     }
     return $template;
+}
+
+add_action('woocommerce_payment_complete', 'clear_cart_after_qfpay_success');
+function clear_cart_after_qfpay_success($order_id) {
+    $order = wc_get_order($order_id);
+
+    if ($order && $order->get_payment_method() === 'qfpay') {
+        WC()->cart->empty_cart();
+    }
 }

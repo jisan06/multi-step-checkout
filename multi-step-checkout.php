@@ -36,6 +36,7 @@ function msc_enqueue_scripts() {
 add_action('wp_enqueue_scripts', 'msc_enqueue_scripts');
 
 require_once MSC_PLUGIN_PATH . 'includes/functions.php';
+require_once MSC_PLUGIN_PATH . 'includes/cart/add-to-cart.php';
 // Activation & Deactivation hooks
 function msc_activate() {
     // Any setup needed on activation

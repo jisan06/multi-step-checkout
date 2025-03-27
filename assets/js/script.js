@@ -603,7 +603,6 @@ jQuery(document).ready(function ($) {
     //cart button update
 
     $(document).on('click',  '.woosb-quantity-minus', function () {
-        let productId = $(this).attr("data-product-id");
         let quantityInput = $(this).parents('.woosb-price-quantity:first').find('.woosb-quantity-input');
         if (quantityInput.length) {
             let currentValue = parseInt(quantityInput.val(), 10);
@@ -617,7 +616,6 @@ jQuery(document).ready(function ($) {
     });
 
     $(document).on('click',  '.woosb-quantity-plus', function () {
-        let productId = $(this).attr("data-product-id");
         let quantityInput = $(this).parents('.woosb-price-quantity:first').find('.woosb-quantity-input');
         if (quantityInput.length) {
             let currentValue = parseInt(quantityInput.val(), 10) || 0;
@@ -646,6 +644,7 @@ jQuery(document).ready(function ($) {
         totalQty = 0
         let totalMiniQty = 0
         let requiredQty = 0;
+        let cartBtn = $('#woosb-multi-add-to-cart');
         $('.woosb-bundle .woosb-quantity .woosb-quantity-input').each(function() {
             let quantity = parseInt($(this).val());
             totalQty += quantity;
@@ -661,12 +660,57 @@ jQuery(document).ready(function ($) {
         }else {
             $('.msc-mini-add-more-wrap').hide()
         }
-        if (totalQty > requiredQty/* || cartCount >= requiredQty*/) {
-            $('#woosb-multi-add-to-cart').removeClass('disabled');
+        if (totalQty > requiredQty || cartBtn.attr('data-cart-count') > requiredQty) {
+            cartBtn.removeClass('disabled');
         } else {
-            $('#woosb-multi-add-to-cart').addClass('disabled');
+            cartBtn.addClass('disabled');
         }
     }
+
+    //Main add to cart button
+    $('#woosb-multi-add-to-cart').on('click', function() {
+        var bundles = [];
+        let that = $(this);
+        let totalQty = that.attr('data-cart-count')
+        $('.woosb-bundle').each(function() {
+            var bundleId = $(this).data('product-id');
+            var quantity = $('#quantity_' + bundleId).val() || 1;
+
+            if (quantity > 0) {
+                totalQty = Number(totalQty) + Number(quantity);
+                bundles.push({ id: bundleId, qty: quantity });
+            }
+        });
+        if ( totalQty > 0 && bundles.length === 0 && that.data('redirect') ) {
+            window.location.href = that.data('redirect');
+        }else {
+            if (bundles.length === 0) {
+                alert("Please select at least one bundle.");
+                return;
+            }
+            $.ajax({
+                type: 'POST',
+                url: msc_core.ajaxurl,
+                data: {
+                    action: 'woosb_multi_add_to_cart',
+                    bundles: bundles
+                },
+                beforeSend: function () {
+                    $('#woosb-multi-add-to-cart').text('添加...').prop('disabled', true);
+                },
+                success: function (response) {
+                    if (response.success) {
+                        that.attr('data-cart-count', totalQty)
+                        alert("Bundles added to cart!");
+                        $(document.body).trigger('wc_fragment_refresh');
+                    } else {
+                        alert("Error adding bundles.");
+                    }
+                    $('#woosb-multi-add-to-cart').text('立即下單').prop('disabled', false);
+                }
+            });
+        }
+    });
 
     $(document).on('click',  '#woosb-multi-mini-add-to-cart', function () {
         var bundles = [];
