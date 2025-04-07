@@ -1,152 +1,274 @@
 <?php
-    if (!defined('ABSPATH')) {
-        exit; // Exit if accessed directly
-    }
+
+if (!defined('ABSPATH')) {
+
+    exit; // Exit if accessed directly
+
+}
+    $areas = [
+        '港島 – 中西區' ,
+        '港島 – 灣仔',
+        '港島 – 東區',
+        '港島 – 南區',
+        '九龍 – 油尖旺',
+        '九龍 – 深水埗',
+        '九龍 – 九龍城',
+        '九龍 – 黃大仙',
+        '九龍 – 觀塘',
+        '新界 – 葵青',
+        '新界 – 荃灣',
+        '新界 – 屯門',
+        '新界 – 元朗',
+        '新界 – 北區',
+        '新界 – 大埔',
+        '新界 – 沙田',
+        '新界 – 西貢' ,
+        '新界 – 離島'
+    ];
+    $delivery_times = [
+        '9:00 – 12:00' ,
+        '13:00 – 17:00' ,
+        '18:00 – 21:00' ,
+    ];
 ?>
 
+
 <div class="shipping-methods" style="display: none">
+
     <?php
-    $chosen_shipping_methods = WC()->session->get('chosen_shipping_methods');
-    $default_shipping_method = !empty($chosen_shipping_methods) ? $chosen_shipping_methods[0] : '';
+
+    $location_json = MSC_PLUGIN_PATH . 'lib/locations.json';
+
+    $lang = 'chinese';
+
+    $location_data = json_decode(file_get_contents($location_json), true)[$lang];
+
+    $regions = $location_data['regions'];
 
     if (!empty($active_shipping_methods)) {
-        foreach ($active_shipping_methods as $method) {
-            $method_id = esc_attr($method['id']);
-            $checked = ($method_id === $default_shipping_method || strpos($default_shipping_method, $method_id) === 0) ? 'checked' : '';
-            ?>
-            <label for="<?php echo $method_id; ?>">
-                <div class="shipping-method" data-method-id="<?php echo $method_id; ?>">
-                    <input
-                        type="radio"
-                        name="shipping_method" value="<?php echo $method_id; ?>"
-                        id="<?php echo $method_id; ?>" <?php /*echo $checked; */?>
-                        data-cost="<?php echo esc_attr($method['cost']); ?>"
-                        data-title="<?php echo esc_attr($method['title']); ?>"
+        foreach ($active_shipping_methods as $index => $method) {
+            $method_id = esc_attr($method->id);
+            if($method_id != $free_shipping_id) {
+                $method_Price = $free_shipping_id
+                    ? '<div class="del-price">' . wc_price($method->cost) .'<span class="free-text">免運費</span></div> '
+                    : wc_price($method->cost);
+                $checked = ($method_id === $default_shipping_method || strpos($default_shipping_method, $method_id) === 0) ? 'checked' : '';
+                ?>
+                <label for="<?php echo $method_id; ?>">
+                    <div
+                            class="shipping-method <?php echo $checked ? 'active' : '' ?>"
                     >
-                    <div class="shipping-label"><?php echo esc_html($method['title']); ?></div> -
-                    <div class="shipping-cost"><?php echo wc_price($method['cost']); ?></div>
-                    <span class="arrow">→</span> <!-- Right arrow -->
-                </div>
-            </label>
-            <?php
+                        <input
+                                type="radio"
+                                name="shipping_method"
+                                value="<?php echo $method_id; ?>"
+                                id="<?php echo $method_id; ?>" <?php echo $checked; ?>
+                                data-method-name="<?php echo esc_attr($method->method_id); ?>"
+                                data-title="<?php echo esc_attr($method->label); ?>"
+                                data-cost="<?php echo esc_attr($method->cost); ?>"
+                                style="display: none"
+                        >
+                        <?php echo esc_html($method->label); ?> +
+                        <?php echo $method_Price; ?>
+                        <span class="arrow"><img src="/wp-content/uploads/2025/02/arrow_forward_ios.png"></span> <!-- Right arrow -->
+                    </div>
+                </label>
+
+                <?php
+            }else {
+                ?>
+                <input type="hidden" value="<?php echo $free_shipping_id; ?>" class="free_shipping_id">
+                <?php
+            }
         }
     }
     ?>
 
-    <button class="next-step disabled">Next Step</button>
+
+    <!--    <button class="next-step disabled">Next Step</button>-->
+
 </div>
+
+
 
 <div class="shipping-methods-details" style="display: none">
     <?php
     if (!empty($active_shipping_methods)) {
         foreach ($active_shipping_methods as $method) {
-    ?>
-        <div class="shipping-fields" data-method-id="<?php echo esc_attr($method['id']); ?>" style="display: none;">
-            <?php
-            if( $method['id'] == 'local_pickup' ) {
-                $ship_regions = [
-                    0 => 'HK',
-                    2 => 'TW',
-                    3 => 'TH',
-                ];
-                $shipany_region = SHIPANY()->get_shipping_shipany_settings()['shipany_region'];
-                $region_short = $ship_regions[$shipany_region];
-                $states = WC()->countries->get_states( $region_short );
+            if($method->method_id != $free_shipping_id) {
                 ?>
-                <p class="form-row form-row-wide" id="calc_shipping_country_field">
-                    <label for="calc_shipping_country"><?php esc_html_e( 'Area', 'woocommerce' ); ?></label>
-                    <input type="hidden" name="calc_shipping_country" id="calc_shipping_country" value="<?php echo $region_short; ?>">
-                    <select name="calc_shipping_state" class="state_select" id="calc_shipping_state" data-placeholder="<?php esc_attr_e( 'State', 'woocommerce' ); ?>">
-                        <option value=""><?php esc_html_e( 'Select an option&hellip;', 'woocommerce' ); ?></option>
-                        <?php
-                        foreach ( $states as $ckey => $cvalue ) {
-                            echo '<option value="' . esc_attr( $ckey ) . '" ' . selected( $current_r, $ckey, false ) . '>' . esc_html( $cvalue ) . '</option>';
-                        }
-                        ?>
-                    </select>
-                </p>
-                <p>
-                    <label>
-                        Pickup Point Address
-                    </label>
-                    <input type="text" placeholder="Pickup Point Address" class="shipping-address" />
-                </p>
-                <p>
-                    <label>
-                        Pickup Point Number
-                    </label>
-                    <input type="number" placeholder="Pickup Point Number" class="shipping-number" />
-                </p>
-            <?php }else { ?>
-                <p class="form-row form-row-wide" id="calc_shipping_country_field">
-                    <label for="calc_shipping_country"><?php esc_html_e( 'Country / region:', 'woocommerce' ); ?></label>
-                    <select name="calc_shipping_country" id="calc_shipping_country" class="country_to_state country_select" rel="calc_shipping_state">
-                        <option value="default"><?php esc_html_e( 'Select a country / region&hellip;', 'woocommerce' ); ?></option>
-                        <?php
-                        foreach ( WC()->countries->get_shipping_countries() as $key => $value ) {
-                            echo '<option value="' . esc_attr( $key ) . '"' . selected( WC()->customer->get_shipping_country(), esc_attr( $key ), false ) . '>' . esc_html( $value ) . '</option>';
-                        }
-                        ?>
-                    </select>
-                </p>
-                <p class="form-row form-row-wide" id="calc_shipping_state_field">
+                <div
+                        class="shipping-fields"
+                        data-method-id="<?php echo esc_attr($method->id); ?>"
+                        data-method-name="<?php echo esc_attr($method->method_id); ?>"
+                        style="display: none;"
+                >
                     <?php
-                    $current_cc = WC()->customer->get_shipping_country();
-                    $current_r  = WC()->customer->get_shipping_state();
-                    $states     = WC()->countries->get_states( $current_cc );
 
-                    if ( is_array( $states ) && empty( $states ) ) {
+                    if( $method->method_id == 'local_pickup' ) {
+
+                        $ship_regions = [
+
+                            0 => 'HK',
+
+                            2 => 'TW',
+
+                            3 => 'TH',
+
+                        ];
+
+                        $shipany_region = SHIPANY()->get_shipping_shipany_settings()['shipany_region'];
+
+                        $region_short = $ship_regions[$shipany_region];
+
                         ?>
-                        <input type="hidden" name="calc_shipping_state" id="calc_shipping_state" placeholder="<?php esc_attr_e( 'State / County', 'woocommerce' ); ?>" />
-                        <?php
-                    } elseif ( is_array( $states ) ) {
-                        ?>
-                        <span>
-                    <label for="calc_shipping_state"><?php esc_html_e( 'State / County:', 'woocommerce' ); ?></label>
-                    <select name="calc_shipping_state" class="state_select" id="calc_shipping_state" data-placeholder="<?php esc_attr_e( 'State / County', 'woocommerce' ); ?>">
-                        <option value=""><?php esc_html_e( 'Select an option&hellip;', 'woocommerce' ); ?></option>
-                        <?php
-                        foreach ( $states as $ckey => $cvalue ) {
-                            echo '<option value="' . esc_attr( $ckey ) . '" ' . selected( $current_r, $ckey, false ) . '>' . esc_html( $cvalue ) . '</option>';
-                        }
-                        ?>
-                    </select>
-                </span>
-                        <?php
-                    } else {
-                        ?>
-                        <label for="calc_shipping_state"><?php esc_html_e( 'State / County:', 'woocommerce' ); ?></label>
-                        <input type="text" class="input-text" value="<?php echo esc_attr( $current_r ); ?>" placeholder="<?php esc_attr_e( 'State / County', 'woocommerce' ); ?>" name="calc_shipping_state" id="calc_shipping_state" />
-                        <?php
-                    }
-                    ?>
-                </p>
-                <p>
-                    <label>
-                        Delivery Address
-                    </label>
-                    <input type="text" placeholder="Delivery Address" class="shipping-address" />
-                </p>
-                <p>
-                    <label>
-                        Date of Receipt
-                    </label>
-                    <input type="datetime-local" placeholder="Date of Receipt" class="shipping-receipt-date date-time" />
-                </p>
-                <p>
-                    <label>
-                        Delivery Time
-                    </label>
-                    <input type="datetime-local" placeholder="Delivery Time" class="shipping-time date-time" />
-                </p>
-                <p>
-                    <label>
-                        Contact Number
-                    </label>
-                    <input type="number" placeholder="Contact Number" class="shipping-number" />
-                </p>
-            <?php } ?>
-        </div>
-    <?php } } ?>
-    <button class="confirm-data backButton">Confirmation</button>
+
+                        <input type="hidden" name="shipping_country" id="shipping_country" value="<?php echo $region_short; ?>">
+
+                        <p class="form-row form-row-wide" id="shipping_region_wrap">
+
+                            <label for="shipping_region">地區</label>
+
+                            <select name="shipping_region" id="shipping_region" class="shipping_region select2">
+
+                                <option value="">Select Region</option>
+
+                                <?php
+
+                                foreach ($regions as $region) {
+
+                                    ?>
+
+                                    <option value="<?php echo $region['name'] ?>"><?php echo $region['name'] ?></option>
+
+                                <?php } ?>
+
+                            </select>
+
+                        </p>
+
+                        <p class="form-row form-row-wide" id="shipping_district_wrap">
+
+                            <label for="shipping_district">區</label>
+
+                            <select name="shipping_district" id="shipping_district" class="shipping_district select2">
+
+                                <option value="">Select District</option>
+
+                            </select>
+
+                        </p>
+
+                        <p class="form-row form-row-wide" id="shipping_address_wrap">
+
+                            <label for="shipping_address">地址</label>
+
+                            <select name="shipping_address" id="shipping_address" class="shipping_address select2">
+
+                                <option value="">Select Address</option>
+
+                            </select>
+
+                        </p>
+
+
+
+                    <?php }else { ?>
+
+                        <p>
+
+                            <label for="shipping_area">
+
+                                地區
+
+                            </label>
+
+                            <select name="shipping_area" id="shipping_area" class="shipping-area">
+
+                                <option value="">請選擇地區</option>
+
+                                <?php
+
+                                foreach ($areas as $area) {
+
+                                    ?>
+
+                                    <option value="<?php echo $area ?>"><?php echo $area ?></option>
+
+                                <?php } ?>
+
+                            </select>
+
+                        </p>
+
+                        <p>
+
+                            <label for="shipping_address">
+
+                                收貨地址
+
+                            </label>
+
+                            <input type="text" placeholder="請輸入收貨地址" id="shipping_address" class="shipping-address" />
+
+                        </p>
+
+                        <p>
+
+                            <label for="shipping_date">
+
+                                收貨日期
+
+                            </label>
+
+                            <input type="date" placeholder="請選擇收貨日期" id="shipping_date" class="shipping-date" />
+
+                        </p>
+
+                        <p>
+
+                            <label for="shipping_time">
+
+                                收貨時段
+
+                            </label>
+
+                            <select name="shipping_time" id="shipping_time" class="shipping-time">
+
+                                <option value="">請選擇收貨時段</option>
+
+                                <?php
+
+                                foreach ($delivery_times as $time) {
+
+                                    ?>
+
+                                    <option value="<?php echo $time ?>"><?php echo $time ?></option>
+
+                                <?php } ?>
+
+                            </select>
+
+                        </p>
+
+                        <p class="contact-number">
+
+                            <label for="shipping_number">
+
+                                聯絡電話
+
+                            </label>
+
+                            <input type="text" placeholder="請輸入聯絡電話" id="shipping_number" class="shipping-number" />
+
+                        </p>
+
+                    <?php } ?>
+
+                </div>
+
+            <?php } } } ?>
+
+    <button class="confirm-data backButton">確認</button>
+
 </div>

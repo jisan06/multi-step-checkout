@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Multi Step Checkout
- * Description: A WooCommerce multi-step checkout with mobile OTP or email login.
+ * Description: A WooCommerce multi-step checkout with mobile OTP or email OTP.
  * Version: 1.0
  * Author: Jisan
  */
@@ -22,7 +22,9 @@ require_once MSC_PLUGIN_PATH . 'includes/init.php';
 function msc_enqueue_scripts() {
     wp_enqueue_style('msc-style', MSC_PLUGIN_URL . 'assets/css/style.css');
 
-    wp_enqueue_script( 'wc-country-select' );
+    wp_enqueue_style( 'select2' );
+    wp_enqueue_script( 'select2' );
+    wp_enqueue_script('msc-captcha-script', 'https://www.google.com/recaptcha/api.js', array('jquery'), MSC_VER, true);
     wp_enqueue_script('msc-script', MSC_PLUGIN_URL . 'assets/js/script.js', array('jquery'), MSC_VER, true);
     wp_localize_script('msc-script', 'msc_core', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
@@ -34,6 +36,7 @@ function msc_enqueue_scripts() {
 add_action('wp_enqueue_scripts', 'msc_enqueue_scripts');
 
 require_once MSC_PLUGIN_PATH . 'includes/functions.php';
+require_once MSC_PLUGIN_PATH . 'includes/cart/add-to-cart.php';
 // Activation & Deactivation hooks
 function msc_activate() {
     // Any setup needed on activation

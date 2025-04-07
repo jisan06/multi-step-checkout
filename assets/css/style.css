@@ -121,6 +121,15 @@
     width: 100% !important;
     height: 100% !important;
 }
+.mouse-disable {
+    cursor: no-drop;
+}
+.login-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+}
 
 
 /*cart item tab*/
@@ -190,6 +199,9 @@
     transition: background-color 0.3s;
     cursor: pointer;
 }
+.shipping-method.active {
+    border: 3px solid #F27400 !important;
+}
 
 .shipping-method:hover {
     background-color: #eaeaea;
@@ -213,12 +225,41 @@
     padding: .5rem 1rem;
     transition: all .3s;
 }
+.del-price .woocommerce-Price-amount {
+    text-decoration: line-through;
+}
+
 /*Coupon Section*/
 #coupon_wrap .coupon-items {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     border: 1px solid #d5d0d0;
+    background-color: #FFEFD6;
     padding: 10px;
+    margin-bottom: 10px;
+}
+.apply-coupon-checkmark {
+    width: 32px;
+    height: 32px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border-radius: 50%;
+    background-color: #F27400;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+.apply-coupon-checkmark:checked::before {
+    content: "\2713";
+    font-size: 18px;
+    color: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1.6, 1);
 }
 
 /*checkout section*/
@@ -298,4 +339,9 @@
 }
 .elementor-menu-cart__product .woosb-price-quantity {
     gap: 50px;
+}
+#shipping_address_wrap .shipping_address option  {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

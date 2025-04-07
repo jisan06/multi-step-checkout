@@ -1,5 +1,45 @@
+let locationRegions = {}
+let selectedRegion  = {}
+let selectedDistrict  = {}
+let selectedAddress  = {}
+loadLocationJSON('chinese')
+async function loadLocationJSON(lang) {
+    try {
+        const response = await fetch('/wp-content/plugins/multi-step-checkout/lib/locations.json');
+
+        // Parse the JSON content
+        let jsonParse = await response.json();
+        locationRegions = jsonParse[lang]?.regions;
+    } catch (error) {
+        console.error('Error loading JSON:', error);
+    }
+}
+(function ($) {
+    let otpBtn = $('.send-otp-btn');
+    window.recaptchaCallback = function () {
+        otpBtn.prop('disabled', false); // Enable button
+        otpBtn.removeClass('mouse-disable');
+    };
+
+    window.recaptchaExpiredCallback = function () {
+        otpBtn.prop('disabled', true); // Disable the button
+        otpBtn.addClass('mouse-disable'); // Add the disable class
+    };
+})(jQuery);
+
+
 jQuery(document).ready(function ($) {
-    let currentStep = msc_core.is_logged_in ? 2 : 1;
+    $('.select2').select2({
+        width: '100%',
+        placeholder: "選擇一個選項",
+        allowClear: false,
+        language: {
+            noResults: function() {
+                return "未找到結果"; // Change this to your desired text
+            }
+        }
+    });
+    let currentStep = $('.msc-current-step').val() ?? 1;
 
     // Initial display
     showStep(currentStep);
@@ -16,16 +56,47 @@ jQuery(document).ready(function ($) {
     }
 
     $("#backButton").click(function () {
-       if (currentStep === 2) {
-           if ($('.shipping-methods-details .shipping-fields').is(':visible')) {
-               shippingMethodShow();
-           }else {
-               cartPage()
-           }
+        if (currentStep == 2) {
+            if ($('.shipping-methods-details .shipping-fields').is(':visible')) {
+                shippingMethodShow();
+            }else {
+                cartPage()
+            }
         }
     });
 
     $('.confirm-data').click(function () {
+        let ShippingField = $(this).parents('.shipping-methods-details:first').find('.shipping-fields:visible')
+        let ShippingMethod = ShippingField.attr('data-method-name')
+        if( ShippingMethod === 'local_pickup' ) {
+            let region = ShippingField.find('#shipping_region').val();
+            let district = ShippingField.find('#shipping_district').val();
+            let shippingAddress = ShippingField.find('#shipping_address').val();
+            if( region === ''){
+                alert('選擇地區')
+                return false;
+            }else if( district === ''){
+                alert('選擇地區')
+                return false;
+            }else if( shippingAddress === ''){
+                alert('選擇地址')
+                return false;
+            }
+        }else {
+            let shippingArea = ShippingField.find('.shipping-area').val();
+            let shippingAddress = ShippingField.find('.shipping-address').val();
+            let shippingNumber = ShippingField.find('.shipping-number').val();
+            if( shippingArea === ''){
+                alert('需要運送區域')
+                return false;
+            }else if( shippingAddress === ''){
+                alert('需要送貨地址')
+                return false;
+            }else if( shippingNumber === ''){
+                alert('需要聯絡電話')
+                return false;
+            }
+        }
         cartPage()
     });
 
@@ -37,8 +108,39 @@ jQuery(document).ready(function ($) {
         $($(this).data("target")).addClass("active");
     });
 
+    function otpTimer(otpBtn, otpBtnText) {
+        let timerInterval;
+        let timeLeft = 60; // 1 minute (60 seconds)
+        let otpTimer = $('#otp_timer');
+
+        // Show the timer div
+        otpTimer.show();
+
+        // Start the countdown
+        timerInterval = setInterval(function() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            otpTimer.text('次性驗證碼時限: ' + seconds + 's');
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);  // Stop the timer
+                otpBtnEnable(otpBtn, otpBtnText)
+                otpTimer.hide(); // Hide the timer
+            }
+
+            timeLeft--;
+        }, 1000); // 1000ms = 1 second
+    }
+
+    function otpBtnEnable(otpBtn, otpBtnText) {
+        otpBtn.removeClass('mouse-disable');
+        otpBtn.prop('disabled', false).text(otpBtnText);
+    }
+
     // Handle OTP sending for mobile
     $("#send_otp").click(function () {
+        let that = $(this);
+        let otpBtnText = that.text();
         let mobileNumber = $("#mobile_number").val().trim();
         let mscCountryCC = $("#msc_country_cc").val().trim();
         let formatMobile = mscCountryCC + '' + mobileNumber;
@@ -51,8 +153,10 @@ jQuery(document).ready(function ($) {
 
         // Generate a 6-digit OTP
         let otp = Math.floor(100000 + Math.random() * 900000);
-        let expiryTime = new Date(new Date().getTime() + 180 * 1000).toUTCString(); // 180s expiry
+        let expiryTime = new Date(new Date().getTime() + 60 * 1000).toUTCString(); // 1 minute expiry
 
+        that.addClass('mouse-disable');
+        that.prop('disabled', true).text(otpBtnText + '...');
         $.ajax({
             url: msc_core.ajaxurl, // Use localized script variable
             method: 'POST',
@@ -65,12 +169,16 @@ jQuery(document).ready(function ($) {
                 if (response.success) {
                     // Store OTP in JavaScript cookie
                     document.cookie = "otp=" + otp + "; expires=" + expiryTime + "; path=/;";
+                    that.text(otpBtnText);
+                    otpTimer(that, otpBtnText);
                     alert('otp is send to your mobile')
                 } else {
+                    otpBtnEnable(that, otpBtnText);
                     alert('Error: ' + response.data); // Error message
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                otpBtnEnable(that, otpBtnText);
                 alert('Error: ' + textStatus);
             }
         });
@@ -83,7 +191,7 @@ jQuery(document).ready(function ($) {
 
         for (let i = 0; i < cookiesArray.length; i++) {
             let cookie = cookiesArray[i].trim();
-            if (cookie.indexOf(name) === 0) {
+            if (cookie.indexOf(name) == 0) {
                 return cookie.substring(name.length, cookie.length);
             }
         }
@@ -94,25 +202,30 @@ jQuery(document).ready(function ($) {
     $("#verify_otp").click(function () {
         let otpCode = $("#otp_code").val().trim();
         let storedOTP = getOTPFromCookie();
-        if (otpCode === "") {
+        if (otpCode == "") {
             alert("Please enter the OTP code.");
             return;
         }
 
         // Check against the dummy OTP code '123'
-        if (otpCode ===storedOTP) {
+        if (otpCode ==storedOTP) {
             let mobile = $("#mobile_number").val();
+            let mscCountryCC = $("#msc_country_cc").val().trim();
+            let formatMobile = mscCountryCC + '' + mobile;
             $.ajax({
                 url: msc_core.ajaxurl,
                 type: "POST",
                 data: {
                     action: "msc_mobile_login",
+                    countryCode: mscCountryCC,
                     mobile: mobile,
+                    formatMobile: formatMobile,
                     otp: otpCode,
                     security: msc_core.nonce
                 },
                 success: function (response) {
                     if (response.success) {
+                        document.cookie = "otp=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                         alert("You are logged in");
                         window.location.reload();
                     }else {
@@ -131,7 +244,7 @@ jQuery(document).ready(function ($) {
     // Handle OTP sending for email
     $("#send_otp_email").click(function () {
         let email = $("#email_address").val().trim();
-        if (email === "") {
+        if (email == "") {
             alert("Please enter your email address.");
             return;
         }
@@ -140,7 +253,7 @@ jQuery(document).ready(function ($) {
 
         // Generate a 6-digit OTP
         let otp = Math.floor(100000 + Math.random() * 900000);
-        let expiryTime = new Date(new Date().getTime() + 180 * 1000).toUTCString(); // 180s expiry
+        let expiryTime = new Date(new Date().getTime() + 180 * 1000).toUTCString(); // 3 minute expiry
 
         $.ajax({
             url: msc_core.ajaxurl, // Use localized script variable
@@ -169,15 +282,15 @@ jQuery(document).ready(function ($) {
     $("#login_email").click(function () {
         let otpCode = $("#email_otp_code").val().trim();
         let storedOTP = getOTPFromCookie();
-        if (otpCode === "") {
+        if (otpCode == "") {
             alert("Please enter the OTP code.");
             return;
         }
 
         // Check against the dummy OTP code '123'
-        if (otpCode ===storedOTP) {
+        if (otpCode ==storedOTP) {
             let email = $("#email_address").val().trim(); // Fixed ID selector to match input field
-            if (email === "") {
+            if (email == "") {
                 alert("Please enter your email.");
                 return;
             }
@@ -193,6 +306,7 @@ jQuery(document).ready(function ($) {
                 },
                 success: function (response) {
                     if (response.success) {
+                        document.cookie = "otp=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                         alert("You are logged in");
                         window.location.reload();
                     } else {
@@ -207,45 +321,23 @@ jQuery(document).ready(function ($) {
     });
 
 
+    //Shipping code
     $('#toggleShipping').on('click', function() {
         shippingMethodShow();
     });
-    $('.shipping-methods .next-step').on('click', function() {
-        shippingMethodFields();
-    })
+    // $('.shipping-methods .next-step').on('click', function() {
+    //     shippingMethodFields();
+    // })
 
-    $('input[name="shipping_method"]').on('change', function() {
-        $(".shipping-methods .next-step").removeClass('disabled');
+    $('input[name="shipping_method"]').on('click', function() {
+        let that = $(this)
+        // $(".shipping-methods .next-step").removeClass('disabled');
         $("#placeOrderButton").removeClass('disabled');
-        var shipLabel = $(this).parents('.shipping-method:first').find('.shipping-label').text()
-        $('#selectedShippingMethod').text(shipLabel)
-        // // Hide elements
-        // $('.shipping-fields').hide();
-        // $('.cart-items-wrap').hide();
-        // $('#coupon_wrap').hide();
-        //
-        // // Get the selected method ID
-        // var selectedMethodId = $(this).val();
-        //
-        // // Show the corresponding shipping fields
-        // $('.shipping-methods-details .shipping-fields[data-method-id="' + selectedMethodId + '"]').show();
-        // $('#backButton').show();
-        //
-        // // Trigger WooCommerce to update the cart total via AJAX
-        // $.ajax({
-        //     type: 'POST',
-        //     url: msc_core.ajaxurl,
-        //     data: {
-        //         action: 'update_shipping',
-        //         shipping_method: selectedMethodId,
-        //     },
-        //     success: function(response) {
-        //         if (response.success) {
-        //             // Update the cart total dynamically
-        //             $('.msc-nav-total').html(response.data.total); // Update total cart amount
-        //         }
-        //     }
-        // });
+        $('.shipping-method').removeClass('active');
+        let parent = that.parents('.shipping-method:first');
+        parent.addClass('active');
+        $('#selectedShippingMethod').text(that.data('title'));
+        shippingMethodFields(that);
     });
 
     function cartPage() {
@@ -269,13 +361,15 @@ jQuery(document).ready(function ($) {
         $('.confirm-data').hide()
     }
 
-    function shippingMethodFields() {
+    function shippingMethodFields(obj) {
         $('.confirm-data').show();
         $('.shipping-methods').hide();
         $('.shipping-fields').hide();
-        var selectedMethodId = $('input[name="shipping_method"]:checked').val();
+        var selectedMethodId = obj.val();
         $('.shipping-methods-details').show();
+        var freeShippingId = $('.free_shipping_id').val();
         $('.shipping-methods-details .shipping-fields[data-method-id="' + selectedMethodId + '"]').show();
+        selectedMethodId = freeShippingId ? freeShippingId : selectedMethodId;
         $.ajax({
             type: 'POST',
             url: msc_core.ajaxurl,
@@ -292,6 +386,48 @@ jQuery(document).ready(function ($) {
         });
     }
 
+    $('.shipping_region').on('change', function () {
+        let regionVal = $(this).val();
+        const districtDropdown = $('#shipping_district');
+        districtDropdown.empty();
+
+        // Add a default option
+        districtDropdown.append('<option value="">Select District</option>');
+
+        selectedRegion = locationRegions.find(region => region.name === regionVal);
+
+        if (selectedRegion && selectedRegion.districts) {
+            // Populate districts based on the selected region
+            selectedRegion.districts.forEach(district => {
+                const option = $('<option></option>');  // jQuery way to create an option element
+                option.val(district.name);
+                option.text(district.name);
+                districtDropdown.append(option);  // Append option to the district dropdown
+            });
+        }
+    })
+
+    $('.shipping_district').on('change', function () {
+        let districtVal = $(this).val();
+        selectedDistrict = selectedRegion ? selectedRegion.districts.find(district => district.name === districtVal) : null;
+
+        const addressDropdown = $('#shipping_address_wrap .shipping_address');
+        addressDropdown.empty().append('<option value="">Select Address</option>');
+
+        if (selectedDistrict) {
+            selectedDistrict.stores.forEach(store => {
+                let storeDetails = `${store.code} - ${store.address} (週一至週五: ${store.business_hours.mon_to_fri}, 週六至週日: ${store.business_hours.sat_sun_public_holidays})`;
+                addressDropdown.append(`<option value="${store.code}">${storeDetails}</option>`);
+            });
+        }
+    })
+
+    $('#shipping_address_wrap #shipping_address').on('change', function () {
+        selectedAddress = $("#shipping_address_wrap #shipping_address option:selected").val();
+    })
+
+    //Shipping code end
+
 
     //Coupon section
     $('#toggleCoupon').on('click', function () {
@@ -303,10 +439,44 @@ jQuery(document).ready(function ($) {
         $('#backButton').show();
         $('.confirm-data').show();
     });
-    // Apply Coupon
-    $('.apply-button').on('click', function () {
-        var coupon_code = $(this).data('coupon');
 
+    $('#apply_coupon_btn').on('click', function () {
+        let couponCode = $('#coupon-input').val()
+        if( couponCode == '' ) {
+            alert('Field must not empty')
+            return;
+        }
+        applyCouponCode(couponCode);
+    })
+    // Apply Coupon
+    $('.apply-coupon-checkmark').on('change', function () {
+        let that = $(this);
+        var coupon_code = that.val();
+        if( that.is(':checked') ) {
+            $('.apply-coupon-checkmark').not(this).prop('checked', false);
+            applyCouponCode(coupon_code);
+        }else {
+            $.ajax({
+                url: msc_core.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'remove_all_coupons'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#discountAmount').text('$0.00');
+                        $('.msc-nav-total').html(response.data.total); // Update total cart amount
+                        $('#coupon_summary').hide();
+                        $('#appliedCoupon').hide();
+                        $('.apply-button').show();
+                        button.text(buttonDefault)
+                    }
+                }
+            });
+        }
+    });
+
+    function applyCouponCode(coupon_code) {
         $.ajax({
             url: msc_core.ajaxurl,
             type: 'POST',
@@ -321,47 +491,49 @@ jQuery(document).ready(function ($) {
                     $('#coupon_summary').show();
                     $('#appliedCoupon .coupon-amount').html(response.data.discount);
                     $('#appliedCoupon').show();
+                    $('.apply-button').hide();
+                    $('#coupon_' + coupon_code).prop('checked', true)
                 } else {
                     alert(response.message);
                 }
             }
         });
-    });
+    }
 
     // Remove Coupon
-    $('#removeCoupon').on('click', function () {
-        $.ajax({
-            url: msc_core.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'remove_all_coupons'
-            },
-            success: function (response) {
-                if (response.success) {
-                    $('#discountAmount').text('$0.00');
-                    $('.msc-nav-total').html(response.data.total); // Update total cart amount
-                    $('#coupon_summary').hide();
-                }
-            }
-        });
-    });
+    // $('#removeCoupon').on('click', function () {
+    //     let button = $(this)
+    //     let buttonDefault = $(this).text()
+    //     button.text('Removing...')
+    //     $.ajax({
+    //         url: msc_core.ajaxurl,
+    //         type: 'POST',
+    //         data: {
+    //             action: 'remove_all_coupons'
+    //         },
+    //         success: function (response) {
+    //             if (response.success) {
+    //                 $('#discountAmount').text('$0.00');
+    //                 $('.msc-nav-total').html(response.data.total); // Update total cart amount
+    //                 $('#coupon_summary').hide();
+    //                 $('#appliedCoupon').hide();
+    //                 $('.apply-button').show();
+    //                 button.text(buttonDefault)
+    //             }
+    //         }
+    //     });
+    // });
 
-//place order
+    //place order
     $('#placeOrderButton').on('click', function(e) {
         e.preventDefault(); // Prevent default form submission
-
-        // Collect the selected payment method
-        // var selectedPaymentMethod = $('input[name="payment_method"]:checked').val();
-        // if (!selectedPaymentMethod) {
-        //     alert('Please select a payment method.');
-        //     return;
-        // }
 
         // Collect selected shipping method
         var shipping = $('input[name="shipping_method"]:checked');
         var shippingCost = shipping.data('cost');
         var shippingTitle = shipping.data('title');
         var shippingMethod = shipping.val();
+        var shippingMethodName = shipping.data('method-name');
         if (!shippingMethod) {
             alert('Please select a shipping method.');
             return;
@@ -371,37 +543,45 @@ jQuery(document).ready(function ($) {
         var shippingContainer = $('.shipping-fields[data-method-id="' + shippingMethod + '"]');
 
         // Retrieve relevant values based on selected shipping method
-        var shippingAddress = shippingContainer.find('.shipping-address').val();
+        var shippingArea = shippingContainer.find('.shipping-area').val();
+        var shippingAddress = shippingContainer.find('#shipping_address').val();
+        var shippingDate = shippingContainer.find('.shipping-date').val();
+        var shippingTime= shippingContainer.find('.shipping-time').val();
         var contactNumber = shippingContainer.find('.shipping-number').val();
-        var country = shippingContainer.find('#calc_shipping_country').val();
-        var state = shippingContainer.find('#calc_shipping_state').val();
-        var receiptDate = shippingContainer.find('.shipping-receipt-date').val();
-        var deliveryTime = shippingContainer.find('.shipping-time').val();
 
-        var couponCode = $('#couponCode').val(); // Get coupon code
-
-        // Validate required fields
-        if (!shippingAddress || !contactNumber || !country || !state) {
-            alert('Please fill in all required shipping details.');
-            return;
+        var country = shippingContainer.find('#shipping_country').val();
+        var region = shippingContainer.find('#shipping_region').val();
+        var district = shippingContainer.find('#shipping_district').val();
+        var freeShippingId = $('.free_shipping_id').val();
+        if( freeShippingId ) {
+            shippingMethod = freeShippingId;
+            shippingCost = 0;
         }
+        if( shippingMethodName === 'local_pickup' ) {
+            shippingAddress = selectedAddress;
+        }
+        var couponCode = $('#couponCode').val(); // Get coupon code
 
         // Order data object
         var orderData = {
             action: 'place_order',
-            // payment_method: selectedPaymentMethod,
             shipping_method: shippingMethod,
+            shipping_name: shippingMethodName,
             shipping_title: shippingTitle,
             shipping_cost: shippingCost,
-            shipping_address: shippingAddress,
-            country: country,
-            state: state,
-            contact_number: contactNumber,
-            coupon_code: couponCode,
-            receipt_date: receiptDate,
-            delivery_time: deliveryTime,
-        };
 
+            shipping_area: shippingArea ?? '',
+            shipping_date: shippingDate ?? '',
+            shipping_time: shippingTime ?? '',
+            shipping_address: shippingAddress ?? '',
+            contact_number: contactNumber ?? '',
+
+            country: country ?? '',
+            region: region ?? '',
+            district: district,
+
+            coupon_code: couponCode,
+        };
         // Send AJAX request to place order
         $.ajax({
             url: msc_core.ajaxurl,
@@ -412,10 +592,7 @@ jQuery(document).ready(function ($) {
             },
             success: function(response) {
                 if (response.success && response.data.redirect_url) {
-                    // $('.payment-methods-container').hide();
-                    // $('.msc-checkout-form .order-success').show();
-                    $('.msc-checkout-form .pay-screen').show();
-                    // window.location.href = response.data.redirect_url;
+                    window.location.href = response.data.redirect_url;
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -430,27 +607,27 @@ jQuery(document).ready(function ($) {
     let totalQty = 0;
     //cart button update
 
-    $(document).on('click',  '.woosb-quantity-minus', function () {
-        let productId = $(this).attr("data-product-id");
+    /*$(document).on('click',  '.woosb-quantity-minus', function () {
         let quantityInput = $(this).parents('.woosb-price-quantity:first').find('.woosb-quantity-input');
         if (quantityInput.length) {
-            let currentValue = parseInt(quantityInput.val(), 10) || 0;
-            if (currentValue > 1) {
-                quantityInput.val(currentValue - 1);
+            let currentValue = parseInt(quantityInput.val(), 10);
+            let val = currentValue - 1;
+            if( val < 0 ) {
+                val = 0;
             }
+            quantityInput.val(val);
+            updateAddToCartButton();
         }
-        updateAddToCartButton();
-    });
+    });*/
 
-    $(document).on('click',  '.woosb-quantity-plus', function () {
-        let productId = $(this).attr("data-product-id");
+    /*$(document).on('click',  '.woosb-quantity-plus', function () {
         let quantityInput = $(this).parents('.woosb-price-quantity:first').find('.woosb-quantity-input');
         if (quantityInput.length) {
             let currentValue = parseInt(quantityInput.val(), 10) || 0;
             quantityInput.val(currentValue + 1);
         }
         updateAddToCartButton();
-    });
+    });*/
 
     $(document).on('click',  '.elementor-menu-cart__toggle', function () {
         let totalCartQty = 0
@@ -468,10 +645,12 @@ jQuery(document).ready(function ($) {
 
     // Update button state based on total quantity
 
-    function updateAddToCartButton() {
+    /*function updateAddToCartButton() {
         totalQty = 0
         let totalMiniQty = 0
-        $('.woosb-quantity .woosb-quantity-input').each(function() {
+        let requiredQty = 0;
+        let cartBtn = $('#woosb-multi-add-to-cart');
+        $('.woosb-bundle .woosb-quantity .woosb-quantity-input').each(function() {
             let quantity = parseInt($(this).val());
             totalQty += quantity;
         });
@@ -479,19 +658,66 @@ jQuery(document).ready(function ($) {
             let quantity = parseInt($(this).val());
             totalMiniQty += quantity;
         });
-        if( totalMiniQty < 6 ) {
-            let addMoreQty = 6 - totalMiniQty;
+        if( totalMiniQty < requiredQty ) {
+            let addMoreQty = requiredQty - totalMiniQty;
             $('.msc-mini-add-more').text(addMoreQty)
             $('.msc-mini-add-more-wrap').show()
         }else {
             $('.msc-mini-add-more-wrap').hide()
         }
-        if (totalQty >= 6 || cartCount >= 6) {
-            $('#woosb-multi-add-to-cart').removeClass('disabled');
+        if (totalQty > requiredQty || cartBtn.attr('data-cart-count') > requiredQty) {
+            cartBtn.removeClass('disabled');
         } else {
-            $('#woosb-multi-add-to-cart').addClass('disabled');
+            cartBtn.addClass('disabled');
         }
-    }
+    }*/
+
+    //Main add to cart button
+    /*$('#woosb-multi-add-to-cart').on('click', function() {
+        var bundles = [];
+        let that = $(this);
+        let totalQty = that.attr('data-cart-count')
+        $('.woosb-bundle').each(function() {
+            var bundleId = $(this).data('product-id');
+            var quantity = $('#quantity_' + bundleId).val() || 1;
+
+            if (quantity > 0) {
+                totalQty = Number(totalQty) + Number(quantity);
+                bundles.push({ id: bundleId, qty: quantity });
+            }
+        });
+        if ( totalQty > 0 && bundles.length === 0 && that.data('redirect') ) {
+            window.location.href = that.data('redirect');
+        }else {
+            if (bundles.length === 0) {
+                alert("Please select at least one bundle.");
+                return;
+            }
+            $.ajax({
+                type: 'POST',
+                url: msc_core.ajaxurl,
+                data: {
+                    action: 'woosb_multi_add_to_cart',
+                    bundles: bundles
+                },
+                beforeSend: function () {
+                    $('#woosb-multi-add-to-cart').text('添加...').prop('disabled', true);
+                },
+                success: function (response) {
+                    if (response.success) {
+                        that.attr('data-cart-count', totalQty)
+                        // Redirect after success
+							window.location.href = '/custom-checkout'; // Change this to your desired page URL
+                        $(document.body).trigger('wc_fragment_refresh');
+
+                    } else {
+                        alert("Error adding bundles.");
+                    }
+                    $('#woosb-multi-add-to-cart').text('立即下單').prop('disabled', false);
+                }
+            });
+        }
+    });*/
 
     $(document).on('click',  '#woosb-multi-mini-add-to-cart', function () {
         var bundles = [];
@@ -505,7 +731,7 @@ jQuery(document).ready(function ($) {
             }
         });
 
-        if (bundles.length === 0) {
+        if (bundles.length == 0) {
             alert("Please select at least one bundle.");
             return;
         }
@@ -532,8 +758,3 @@ jQuery(document).ready(function ($) {
     });
 
 });
-
-
-
-
-
