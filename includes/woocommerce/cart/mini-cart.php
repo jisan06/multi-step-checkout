@@ -1,6 +1,6 @@
 <?php
-defined( 'ABSPATH' ) || exit;
-
+defined( 'ABSPATH' ) || exit;?>
+<?php
 if ( ! function_exists( 'msc_render_mini_cart_item' ) ) {
     function msc_render_mini_cart_item( $cart_item_key, $cart_item ) {
         $_product = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
@@ -56,16 +56,18 @@ if ( ! function_exists( 'msc_render_mini_cart_item' ) ) {
                     </div>
                 </div>
                 <div class="woosb-quantity">
-                    <button class="woosb-quantity-minus" data-product-id="<?php echo esc_attr($product_id);?>">−</button>
+                    <button class="sb-quantity-minus" data-product-id="<?php echo esc_attr($product_id); ?>">−</button>
                     <input
                             type="number"
-                            class="woosb-quantity-input" id="quantity_<?php echo esc_attr($product_id);?>"
+                            class="sb-quantity-input"
+                            id="quantity_<?php echo esc_attr($product_id); ?>"
                             name="quantity"
-                            value="<?php echo $cart_item['quantity'] ?>"
-                            min="0"
-                            data-product-id="<?php echo $product_id?>"
+                            value="<?php echo isset($cart_item['quantity']) ? esc_attr($cart_item['quantity']) : 1; ?>"
+                            min="1"
+                            data-product-id="<?php echo esc_attr($product_id); ?>"
                     >
-                    <button class="woosb-quantity-plus" data-product-id="<?php echo esc_attr($product_id);?>">+</button>
+                    <button class="sb-quantity-plus" data-product-id="<?php echo esc_attr($product_id); ?>">+</button>
+                    <button class="update-cart-mini" data-product-id="<?php echo esc_attr($product_id); ?>">更新購物車</button>
                 </div>
             </div>
 
@@ -116,7 +118,7 @@ if ( empty( $cart_items ) ) { ?>
             </div>
         </div>
         <div>
-            <button id="woosb-multi-mini-add-to-cart" class="button add-to-cart-button <?php echo $btn_class; ?>">立即下單</button>
+            <a href="/custom-checkout" id="mini-cart-btn">立即下單</a>
             <div>6餐起送貨</div>
         </div>
     </div>

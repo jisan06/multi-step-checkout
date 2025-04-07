@@ -10,10 +10,10 @@ function woosb_multi_add_to_cart_shortcode() {
     $btn_class =  $cart_count  > 0 ? '' : 'disabled';
     ?>
     <button
-        id="woosb-multi-add-to-cart"
-        class="button add-to-cart-button <?php echo $btn_class; ?>"
-        data-redirect="<?php echo $redirect_url; ?>"
-        data-cart-count="<?php echo $cart_count; ?>"
+            id="woosb-multi-add-to-cart"
+            class="button add-to-cart-button <?php echo $btn_class; ?>"
+            data-redirect="<?php echo $redirect_url; ?>"
+            data-cart-count="<?php echo $cart_count; ?>"
     >
         立即下單
     </button>

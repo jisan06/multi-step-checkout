@@ -31,10 +31,10 @@ $cc_list = xoo_ml_get_country_codes();
         </div>
         <div class="login-btn-group">
             <div
-                class="g-recaptcha"
-                data-sitekey="<?php echo GOOGLE_RECAPTCHA_SITE_KEY;?>"
-                data-callback="recaptchaCallback"
-                data-expired-callback="recaptchaExpiredCallback"
+                    class="g-recaptcha"
+                    data-sitekey="<?php echo GOOGLE_RECAPTCHA_SITE_KEY;?>"
+                    data-callback="recaptchaCallback"
+                    data-expired-callback="recaptchaExpiredCallback"
             ></div>
             <button id="verify_otp">登錄</button>
             <div id="otp_timer" style="display: none;"></div>
@@ -52,10 +52,10 @@ $cc_list = xoo_ml_get_country_codes();
         </div>
         <div class="login-btn-group">
             <div
-                class="g-recaptcha"
-                data-sitekey="<?php echo GOOGLE_RECAPTCHA_SITE_KEY;?>"
-                data-callback="recaptchaCallback"
-                data-expired-callback="recaptchaExpiredCallback"
+                    class="g-recaptcha"
+                    data-sitekey="<?php echo GOOGLE_RECAPTCHA_SITE_KEY;?>"
+                    data-callback="recaptchaCallback"
+                    data-expired-callback="recaptchaExpiredCallback"
             ></div>
             <button id="login_email">登錄</button>
         </div>

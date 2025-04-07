@@ -5,6 +5,31 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 
 }
+    $areas = [
+        '港島 – 中西區' ,
+        '港島 – 灣仔',
+        '港島 – 東區',
+        '港島 – 南區',
+        '九龍 – 油尖旺',
+        '九龍 – 深水埗',
+        '九龍 – 九龍城',
+        '九龍 – 黃大仙',
+        '九龍 – 觀塘',
+        '新界 – 葵青',
+        '新界 – 荃灣',
+        '新界 – 屯門',
+        '新界 – 元朗',
+        '新界 – 北區',
+        '新界 – 大埔',
+        '新界 – 沙田',
+        '新界 – 西貢' ,
+        '新界 – 離島'
+    ];
+    $delivery_times = [
+        '9:00 – 12:00' ,
+        '13:00 – 17:00' ,
+        '18:00 – 21:00' ,
+    ];
 ?>
 
 
@@ -31,7 +56,7 @@ if (!defined('ABSPATH')) {
                 ?>
                 <label for="<?php echo $method_id; ?>">
                     <div
-                        class="shipping-method <?php echo $checked ? 'active' : '' ?>"
+                            class="shipping-method <?php echo $checked ? 'active' : '' ?>"
                     >
                         <input
                                 type="radio"
@@ -150,7 +175,33 @@ if (!defined('ABSPATH')) {
 
                     <?php }else { ?>
 
-                        <p class="delivery-address">
+                        <p>
+
+                            <label for="shipping_area">
+
+                                地區
+
+                            </label>
+
+                            <select name="shipping_area" id="shipping_area" class="shipping-area">
+
+                                <option value="">請選擇地區</option>
+
+                                <?php
+
+                                foreach ($areas as $area) {
+
+                                    ?>
+
+                                    <option value="<?php echo $area ?>"><?php echo $area ?></option>
+
+                                <?php } ?>
+
+                            </select>
+
+                        </p>
+
+                        <p>
 
                             <label for="shipping_address">
 
@@ -162,6 +213,44 @@ if (!defined('ABSPATH')) {
 
                         </p>
 
+                        <p>
+
+                            <label for="shipping_date">
+
+                                收貨日期
+
+                            </label>
+
+                            <input type="date" placeholder="請選擇收貨日期" id="shipping_date" class="shipping-date" />
+
+                        </p>
+
+                        <p>
+
+                            <label for="shipping_time">
+
+                                收貨時段
+
+                            </label>
+
+                            <select name="shipping_time" id="shipping_time" class="shipping-time">
+
+                                <option value="">請選擇收貨時段</option>
+
+                                <?php
+
+                                foreach ($delivery_times as $time) {
+
+                                    ?>
+
+                                    <option value="<?php echo $time ?>"><?php echo $time ?></option>
+
+                                <?php } ?>
+
+                            </select>
+
+                        </p>
+
                         <p class="contact-number">
 
                             <label for="shipping_number">
@@ -170,31 +259,7 @@ if (!defined('ABSPATH')) {
 
                             </label>
 
-                            <input type="number" placeholder="請輸入聯絡電話" id="shipping_number" class="shipping-number" />
-
-                        </p>
-
-                        <p class="contact-person">
-
-                            <label for="shipping_person">
-
-                                聯絡人
-
-                            </label>
-
-                            <input type="text" placeholder="請輸入聯絡電話" id="shipping_person" class="shipping-person" />
-
-                        </p>
-
-                        <p class="contact-note">
-
-                            <label for="delivery_note">
-
-                                送货单
-
-                            </label>
-
-                            <textarea name="deliver-note" id="delivery_note" class="delivery-note" cols="30" rows="5"></textarea>
+                            <input type="text" placeholder="請輸入聯絡電話" id="shipping_number" class="shipping-number" />
 
                         </p>
 
@@ -207,4 +272,3 @@ if (!defined('ABSPATH')) {
     <button class="confirm-data backButton">確認</button>
 
 </div>
-

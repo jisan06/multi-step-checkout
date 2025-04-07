@@ -118,8 +118,9 @@ foreach ($coupons as $coupon_post) {
 
 <div id="coupon_wrap" style="display: none;">
     <div class="coupon-input-section">
-        <input type="text" id="coupon-input">
-        <button id="apply_coupon_btn">??</button>
+        <label>兌換優惠碼</label>
+        <input type="text" id="coupon-input" placeholder="請輸入優惠碼">
+        <button id="apply_coupon_btn">兌換</button>
     </div>
 
     <h3>你的優惠券</h3>

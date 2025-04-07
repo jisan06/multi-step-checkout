@@ -71,6 +71,7 @@ if (!empty($applied_coupons)) {
 $total_cart = wc()->cart->get_total();
 ?>
     <div class="cart-items-wrap">
+        <a class="catalog-back" href="/catalog"><span class="dashicons dashicons-arrow-left-alt2"></span></a>
         <div class="cart-items">
             <div class="main-head">你的訂單</div>
             <?php if ( !empty($cart) ) : ?>

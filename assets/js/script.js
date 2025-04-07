@@ -27,6 +27,7 @@ async function loadLocationJSON(lang) {
     };
 })(jQuery);
 
+
 jQuery(document).ready(function ($) {
     $('.select2').select2({
         width: '100%',
@@ -82,17 +83,17 @@ jQuery(document).ready(function ($) {
                 return false;
             }
         }else {
+            let shippingArea = ShippingField.find('.shipping-area').val();
             let shippingAddress = ShippingField.find('.shipping-address').val();
             let shippingNumber = ShippingField.find('.shipping-number').val();
-            let shippingPerson = ShippingField.find('.shipping-person').val();
-            if( shippingAddress === ''){
+            if( shippingArea === ''){
+                alert('需要運送區域')
+                return false;
+            }else if( shippingAddress === ''){
                 alert('需要送貨地址')
                 return false;
             }else if( shippingNumber === ''){
                 alert('需要聯絡電話')
-                return false;
-            }else if( shippingPerson === ''){
-                alert('需要聯絡人')
                 return false;
             }
         }
@@ -119,7 +120,7 @@ jQuery(document).ready(function ($) {
         timerInterval = setInterval(function() {
             let minutes = Math.floor(timeLeft / 60);
             let seconds = timeLeft % 60;
-            otpTimer.text(minutes + 'm ' + (seconds < 10 ? '0' : '') + seconds + 's');
+            otpTimer.text('次性驗證碼時限: ' + seconds + 's');
 
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);  // Stop the timer
@@ -542,10 +543,11 @@ jQuery(document).ready(function ($) {
         var shippingContainer = $('.shipping-fields[data-method-id="' + shippingMethod + '"]');
 
         // Retrieve relevant values based on selected shipping method
+        var shippingArea = shippingContainer.find('.shipping-area').val();
         var shippingAddress = shippingContainer.find('#shipping_address').val();
+        var shippingDate = shippingContainer.find('.shipping-date').val();
+        var shippingTime= shippingContainer.find('.shipping-time').val();
         var contactNumber = shippingContainer.find('.shipping-number').val();
-        var contactPerson = shippingContainer.find('.shipping-person').val();
-        var deliveryNote = shippingContainer.find('.delivery-note').val();
 
         var country = shippingContainer.find('#shipping_country').val();
         var region = shippingContainer.find('#shipping_region').val();
@@ -568,10 +570,11 @@ jQuery(document).ready(function ($) {
             shipping_title: shippingTitle,
             shipping_cost: shippingCost,
 
+            shipping_area: shippingArea ?? '',
+            shipping_date: shippingDate ?? '',
+            shipping_time: shippingTime ?? '',
             shipping_address: shippingAddress ?? '',
             contact_number: contactNumber ?? '',
-            contact_person: contactPerson ?? '',
-            delivery_note: deliveryNote ?? '',
 
             country: country ?? '',
             region: region ?? '',
@@ -604,7 +607,7 @@ jQuery(document).ready(function ($) {
     let totalQty = 0;
     //cart button update
 
-    $(document).on('click',  '.woosb-quantity-minus', function () {
+    /*$(document).on('click',  '.woosb-quantity-minus', function () {
         let quantityInput = $(this).parents('.woosb-price-quantity:first').find('.woosb-quantity-input');
         if (quantityInput.length) {
             let currentValue = parseInt(quantityInput.val(), 10);
@@ -615,16 +618,16 @@ jQuery(document).ready(function ($) {
             quantityInput.val(val);
             updateAddToCartButton();
         }
-    });
+    });*/
 
-    $(document).on('click',  '.woosb-quantity-plus', function () {
+    /*$(document).on('click',  '.woosb-quantity-plus', function () {
         let quantityInput = $(this).parents('.woosb-price-quantity:first').find('.woosb-quantity-input');
         if (quantityInput.length) {
             let currentValue = parseInt(quantityInput.val(), 10) || 0;
             quantityInput.val(currentValue + 1);
         }
         updateAddToCartButton();
-    });
+    });*/
 
     $(document).on('click',  '.elementor-menu-cart__toggle', function () {
         let totalCartQty = 0
@@ -642,7 +645,7 @@ jQuery(document).ready(function ($) {
 
     // Update button state based on total quantity
 
-    function updateAddToCartButton() {
+    /*function updateAddToCartButton() {
         totalQty = 0
         let totalMiniQty = 0
         let requiredQty = 0;
@@ -667,10 +670,10 @@ jQuery(document).ready(function ($) {
         } else {
             cartBtn.addClass('disabled');
         }
-    }
+    }*/
 
     //Main add to cart button
-    $('#woosb-multi-add-to-cart').on('click', function() {
+    /*$('#woosb-multi-add-to-cart').on('click', function() {
         var bundles = [];
         let that = $(this);
         let totalQty = that.attr('data-cart-count')
@@ -703,8 +706,10 @@ jQuery(document).ready(function ($) {
                 success: function (response) {
                     if (response.success) {
                         that.attr('data-cart-count', totalQty)
-                        alert("Bundles added to cart!");
+                        // Redirect after success
+							window.location.href = '/custom-checkout'; // Change this to your desired page URL
                         $(document.body).trigger('wc_fragment_refresh');
+
                     } else {
                         alert("Error adding bundles.");
                     }
@@ -712,7 +717,7 @@ jQuery(document).ready(function ($) {
                 }
             });
         }
-    });
+    });*/
 
     $(document).on('click',  '#woosb-multi-mini-add-to-cart', function () {
         var bundles = [];
